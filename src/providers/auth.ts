@@ -4,8 +4,8 @@ import { API_URL, dataProvider } from "./data";
 
 // Use the following credentials for demos
 export const authCredentials = {
-  email: "ron.swanson@pawneein.gov",
-  password: "DukeSilver77",
+  email: "michael.scott@dundermifflin.com",
+  password: "demodemo",
 };
 
 export const authProvider: AuthProvider = {
