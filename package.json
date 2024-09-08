@@ -44,9 +44,9 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "scripts": {
-    "dev": "refine dev",
-    "build": "tsc && refine build",
-    "start": "refine start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "refine": "refine",
     "codegen": "graphql-codegen"
   },
