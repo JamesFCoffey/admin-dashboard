@@ -1,29 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
+    "target": "ESNext", // Good
+    "useDefineForClassFields": true, // Good
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Good
+    "allowJs": true, // Good
+    "skipLibCheck": true, // Good
+    "esModuleInterop": true, // Good
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "strict": true, // Good
+    "forceConsistentCasingInFileNames": true, // Good
+    "incremental": true, // Good
+    "module": "ESNext", // Good
     "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
+    "resolveJsonModule": true, // Good
+    "isolatedModules": true, // Good
+    "noEmit": true, // Good
+    "jsx": "preserve", // Good
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "plugins": [{ "name": "next" }] // Good
+    // "moduleResolution": "bundler",
+    // "allowImportingTsExtensions": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["./src", "./dist/types/**/*.ts", "./next-env.d.ts"], // Good
+  "exclude": ["./node_modules"] // Good
 }

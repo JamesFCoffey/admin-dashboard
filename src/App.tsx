@@ -6,7 +6,7 @@ import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
 import { authProvider, dataProvider, liveProvider } from "./providers";
-import { Home, ForgotPassword, Login, Register, CompanyList } from "./pages";
+import { Home, ForgotPassword, Login, Register, CompanyList } from "./routes";
 
 import routerBindings, {
   CatchAllNavigate,
@@ -17,11 +17,11 @@ import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout";
 import { resources } from "./config/resources";
-import Create from "./pages/company/create";
-import Edit from "./pages/company/edit";
-import List from "./pages/tasks/list";
-import TasksCreatePage from "./pages/tasks/create";
-import TasksEditPage from "./pages/tasks/edit";
+import Create from "./routes/company/create";
+import Edit from "./routes/company/edit";
+import List from "./routes/tasks/list";
+import TasksCreatePage from "./routes/tasks/create";
+import TasksEditPage from "./routes/tasks/edit";
 
 function App() {
   return (

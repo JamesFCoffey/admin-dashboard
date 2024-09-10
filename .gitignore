@@ -24,3 +24,5 @@ _.ntvs_
 _.njsproj
 _.sln
 \*.sw?
+.next
+next-env.d.ts
