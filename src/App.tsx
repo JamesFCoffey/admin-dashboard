@@ -22,14 +22,19 @@ import Edit from "./routes/company/edit";
 import List from "./routes/tasks/list";
 import TasksCreatePage from "./routes/tasks/create";
 import TasksEditPage from "./routes/tasks/edit";
+import ErrorBoundary from "./components/error-boundary";
+import { appConfig } from "@/utilities/config";
 
 function App() {
+  const liveMode = appConfig.featureFlags.realtime ? "auto" : "off";
+
   return (
-    <BrowserRouter>
-      <RefineKbarProvider>
-        <AntdApp>
-          <DevtoolsProvider>
-            <Refine
+    <ErrorBoundary>
+      <BrowserRouter>
+        <RefineKbarProvider>
+          <AntdApp>
+            <DevtoolsProvider>
+              <Refine
               dataProvider={dataProvider}
               liveProvider={liveProvider}
               notificationProvider={useNotificationProvider}
@@ -41,7 +46,7 @@ function App() {
                 warnWhenUnsavedChanges: true,
                 useNewQueryKeys: true,
                 projectId: "3WBx42-NyjdMK-Ig281S",
-                liveMode: "auto",
+                liveMode,
               }}
             >
               <Routes>
@@ -82,12 +87,13 @@ function App() {
               <RefineKbar />
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />
-            </Refine>
-            <DevtoolsPanel />
-          </DevtoolsProvider>
-        </AntdApp>
-      </RefineKbarProvider>
-    </BrowserRouter>
+              </Refine>
+              <DevtoolsPanel />
+            </DevtoolsProvider>
+          </AntdApp>
+        </RefineKbarProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
