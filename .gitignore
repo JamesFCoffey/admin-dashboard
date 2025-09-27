@@ -17,6 +17,7 @@ dist-ssr
 
 .vscode/_
 .venv
+.env.local
 !.vscode/extensions.json
 .idea
 .DS_Store
