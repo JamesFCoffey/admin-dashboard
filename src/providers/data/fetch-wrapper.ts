@@ -1,23 +1,32 @@
 import { GraphQLFormattedError } from "graphql";
+import { getSession } from "next-auth/react";
 
 type Error = {
     message: string;
     statusCode: string;
 }
 
-const customFetch = async(url: string, options: RequestInit) => {
-    const accessToken = localStorage.getItem('access_token');
+const resolveAccessToken = async () => {
+    const session = await getSession();
+    const maybeUser = session?.user as (typeof session.user & { accessToken?: string }) | undefined;
+    return maybeUser?.accessToken;
+}
 
-    const headers = options.headers as Record<string, string>;
+const customFetch = async(url: string, options: RequestInit) => {
+    const accessToken = await resolveAccessToken();
+
+    const headers = new Headers(options.headers as HeadersInit);
+
+    if (accessToken && !headers.has('Authorization')) {
+        headers.set('Authorization', `Bearer ${accessToken}`);
+    }
+
+    headers.set('Content-Type', 'application/json');
+    headers.set('Apollo-Require-Preflight', 'true');
 
     return await fetch(url, {
         ...options,
-        headers: {
-            ...headers,
-            Authorization: headers?.Authorization || `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-            "Apollo-Require-Preflight": "true",
-        }
+        headers,
     })
 }
 

@@ -1,54 +1,47 @@
 import type { AuthProvider } from "@refinedev/core";
+import { getSession, signIn, signOut } from "next-auth/react";
 
 import { API_URL, dataProvider } from "./data";
 
-// Use the following credentials for demos
-export const authCredentials = {
-  email: "michael.scott@dundermifflin.com",
-  password: "demodemo",
-};
+export const demoAuthEmail = "michael.scott@dundermifflin.com";
 
 export const authProvider: AuthProvider = {
-  login: async ({ email }) => {
-    try {
-      const { data } = await dataProvider.custom({
-        url: API_URL,
-        method: "post",
-        headers: {},
-        meta: {
-          variables: { email },
-          rawQuery: `
-                mutation Login($email: String!) {
-                    login(loginInput: {
-                      email: $email
-                    }) {
-                      accessToken,
-                    }
-                  }
-                `,
-        },
+  login: async ({ email, providerName, redirectTo }) => {
+    const provider = providerName ?? (email ? "credentials" : "github");
+
+    if (provider === "credentials") {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        callbackUrl: redirectTo ?? "/",
       });
 
-      localStorage.setItem("access_token", data.login.accessToken);
+      if (result?.error) {
+        return {
+          success: false,
+          error: {
+            message: result.error,
+            name: "LoginError",
+          },
+        };
+      }
 
       return {
         success: true,
-        redirectTo: "/",
-      };
-    } catch (e) {
-      const error = e as Error;
-
-      return {
-        success: false,
-        error: {
-          message: "message" in error ? error.message : "Login failed",
-          name: "name" in error ? error.name : "Invalid email or password",
-        },
+        redirectTo: redirectTo ?? "/",
       };
     }
+
+    await signIn(provider, {
+      callbackUrl: redirectTo ?? "/",
+    });
+
+    return {
+      success: true,
+    };
   },
   logout: async () => {
-    localStorage.removeItem("access_token");
+    await signOut({ redirect: false, callbackUrl: "/login" });
 
     return {
       success: true,
@@ -57,6 +50,8 @@ export const authProvider: AuthProvider = {
   },
   onError: async (error) => {
     if (error.statusCode === "UNAUTHENTICATED") {
+      await signOut({ redirect: false, callbackUrl: "/login" });
+
       return {
         logout: true,
       };
@@ -65,45 +60,29 @@ export const authProvider: AuthProvider = {
     return { error };
   },
   check: async () => {
-    try {
-      await dataProvider.custom({
-        url: API_URL,
-        method: "post",
-        headers: {},
-        meta: {
-          rawQuery: `
-                    query Me {
-                        me {
-                          name
-                        }
-                      }
-                `,
-        },
-      });
+    const session = await getSession();
 
+    if (process.env.NODE_ENV === "development") {
+      console.debug("authProvider.check session", session);
+    }
+
+    if (session?.user) {
       return {
         authenticated: true,
-        redirectTo: "/",
-      };
-    } catch (error) {
-      return {
-        authenticated: false,
-        redirectTo: "/login",
       };
     }
+
+    return {
+      authenticated: false,
+      redirectTo: "/login",
+    };
   },
   getIdentity: async () => {
-    const accessToken = localStorage.getItem("access_token");
-
     try {
       const { data } = await dataProvider.custom<{ me: any }>({
         url: API_URL,
         method: "post",
-        headers: accessToken
-          ? {
-              Authorization: `Bearer ${accessToken}`,
-            }
-          : {},
+        headers: {},
         meta: {
           rawQuery: `
                     query Me {
@@ -123,7 +102,8 @@ export const authProvider: AuthProvider = {
 
       return data.me;
     } catch (error) {
-      return undefined;
+      const session = await getSession();
+      return session?.user ?? undefined;
     }
   },
 };

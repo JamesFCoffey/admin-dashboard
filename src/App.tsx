@@ -24,21 +24,70 @@ import TasksCreatePage from "./routes/tasks/create";
 import TasksEditPage from "./routes/tasks/edit";
 import ErrorBoundary from "./components/error-boundary";
 import { appConfig } from "@/utilities/config";
+import { SessionProvider } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
+function SessionRedirectGuard() {
+  const { status } = useSession();
+
+  if (status === "loading") {
+    return null;
+  }
+
+  return (
+    <Routes>
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route
+        element={
+          <Authenticated
+            key="authenticated-layout"
+            fallback={<CatchAllNavigate to="/login" />}
+          >
+            <Layout>
+              <Outlet />
+            </Layout>
+          </Authenticated>
+        }
+      >
+        <Route index element={<Home />} />
+        <Route path="/companies">
+          <Route index element={<CompanyList />} />
+          <Route path="new" element={<Create />} />
+          <Route path="edit/:id" element={<Edit />} />
+        </Route>
+        <Route
+          path="/tasks"
+          element={
+            <List>
+              <Outlet />
+            </List>
+          }
+        >
+          <Route path="new" element={<TasksCreatePage />} />
+          <Route path="edit/:id" element={<TasksEditPage />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
+}
 
 function App() {
   const liveMode = appConfig.featureFlags.realtime ? "auto" : "off";
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <RefineKbarProvider>
-          <AntdApp>
-            <DevtoolsProvider>
-              <Refine
-              dataProvider={dataProvider}
-              liveProvider={liveProvider}
-              notificationProvider={useNotificationProvider}
-              routerProvider={routerBindings}
+      <SessionProvider>
+        <BrowserRouter>
+          <RefineKbarProvider>
+            <AntdApp>
+              <DevtoolsProvider>
+                <Refine
+                  dataProvider={dataProvider}
+                  liveProvider={liveProvider}
+                  notificationProvider={useNotificationProvider}
+                  routerProvider={routerBindings}
               authProvider={authProvider}
               resources={resources}
               options={{
@@ -49,50 +98,17 @@ function App() {
                 liveMode,
               }}
             >
-              <Routes>
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route
-                  element={
-                    <Authenticated
-                      key="authenticated-layout"
-                      fallback={<CatchAllNavigate to="/login" />}
-                    >
-                      <Layout>
-                        <Outlet />
-                      </Layout>
-                    </Authenticated>
-                  }
-                >
-                  <Route index element={<Home />} />
-                  <Route path="/companies">
-                    <Route index element={<CompanyList />} />
-                    <Route path="new" element={<Create />} />
-                    <Route path="edit/:id" element={<Edit />} />
-                  </Route>
-                  <Route
-                    path="/tasks"
-                    element={
-                      <List>
-                        <Outlet />
-                      </List>
-                    }
-                  >
-                    <Route path="new" element={<TasksCreatePage />} />
-                    <Route path="edit/:id" element={<TasksEditPage />} />
-                  </Route>
-                </Route>
-              </Routes>
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-              </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
-          </AntdApp>
-        </RefineKbarProvider>
-      </BrowserRouter>
+                  <SessionRedirectGuard />
+                  <RefineKbar />
+                  <UnsavedChangesNotifier />
+                  <DocumentTitleHandler />
+                </Refine>
+                <DevtoolsPanel />
+              </DevtoolsProvider>
+            </AntdApp>
+          </RefineKbarProvider>
+        </BrowserRouter>
+      </SessionProvider>
     </ErrorBoundary>
   );
 }

@@ -3,6 +3,7 @@ import graphqlDataPRovider, {
   liveProvider as graphqlLiveProvider,
 } from "@refinedev/nestjs-query";
 import { createClient } from "graphql-ws";
+import { getSession } from "next-auth/react";
 import { appConfig } from "@/utilities/config";
 import { logger } from "@/utilities/logger";
 import { fetchWrapper } from "./fetch-wrapper";
@@ -27,16 +28,20 @@ const shouldCreateWsClient =
 export const wsClient = shouldCreateWsClient
   ? createClient({
       url: WS_URL,
-      connectionParams: () => {
-        const accessToken = localStorage.getItem("access_token");
+      lazy: true,
+      connectionParams: async () => {
+        const session = await getSession();
+        const maybeUser = session?.user as (typeof session.user & {
+          accessToken?: string;
+        }) | null;
 
-        if (!accessToken) {
+        if (!maybeUser?.accessToken) {
           return {};
         }
 
         return {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${maybeUser.accessToken}`,
           },
         };
       },
