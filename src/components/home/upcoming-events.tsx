@@ -22,6 +22,7 @@ const UpcomingEvents = () => {
     meta: {
       gqlQuery: DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY,
     },
+    liveMode: "manual",
   });
 
   return (

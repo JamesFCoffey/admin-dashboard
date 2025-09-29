@@ -1,35 +1,16 @@
 import { DollarOutlined } from "@ant-design/icons";
-import { Card } from "antd";
+import { Alert, Card, Empty } from "antd";
 import React from "react";
 import { Text } from "../text";
 import { Area, AreaConfig } from "@ant-design/plots";
-import { useList } from "@refinedev/core";
-import { DASHBOARD_DEALS_CHART_QUERY } from "@/graphql/queries";
-import { mapDealsData } from "@/utilities/helpers";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
-import { DashboardDealsChartQuery } from "@/graphql/types";
+
+import { useDealsChartData } from "@/utilities/hooks";
 
 const DealsChart = () => {
-  const { data } = useList<GetFieldsFromList<DashboardDealsChartQuery>>({
-    resource: "dealStages",
-    filters: [
-      {
-        field: "title",
-        operator: "in",
-        value: ["WON", "LOST"],
-      },
-    ],
-    meta: {
-      gqlQuery: DASHBOARD_DEALS_CHART_QUERY,
-    },
-  });
-
-  const dealData = React.useMemo(() => {
-    return mapDealsData(data?.data);
-  }, [data?.data]);
+  const { data, isLoading, isError, error, isEmpty } = useDealsChartData();
 
   const config: AreaConfig = {
-    data: dealData,
+    data,
     xField: "timeText",
     yField: "value",
     isStack: false,
@@ -58,8 +39,28 @@ const DealsChart = () => {
     },
   };
 
+  const renderContent = () => {
+    if (isError) {
+      return (
+        <Alert
+          type="error"
+          showIcon
+          message="Failed to load deals insights"
+          description={error?.message || "Please try again."}
+        />
+      );
+    }
+
+    if (isEmpty) {
+      return <Empty description="No deals data to display yet." />;
+    }
+
+    return <Area {...config} height={325} />;
+  };
+
   return (
     <Card
+      loading={isLoading}
       style={{ height: "100%" }}
       headStyle={{ padding: "8px 16px" }}
       bodyStyle={{ padding: "24px 24px 0 24px" }}
@@ -72,7 +73,7 @@ const DealsChart = () => {
         </div>
       }
     >
-      <Area {...config} height={325} />
+      {!isLoading && renderContent()}
     </Card>
   );
 };

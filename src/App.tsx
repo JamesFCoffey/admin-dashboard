@@ -14,7 +14,7 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import { App as AntdApp } from "antd";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes, Navigate } from "react-router-dom";
 import Layout from "./components/layout";
 import { resources } from "./config/resources";
 import Create from "./routes/company/create";
@@ -52,6 +52,7 @@ function SessionRedirectGuard() {
         }
       >
         <Route index element={<Home />} />
+        <Route path="/home" element={<Navigate to="/" replace />} />
         <Route path="/companies">
           <Route index element={<CompanyList />} />
           <Route path="new" element={<Create />} />
@@ -65,16 +66,18 @@ function SessionRedirectGuard() {
             </List>
           }
         >
+          <Route path="list" element={<Navigate to="/tasks" replace />} />
           <Route path="new" element={<TasksCreatePage />} />
           <Route path="edit/:id" element={<TasksEditPage />} />
         </Route>
+        <Route path="/tasks/list" element={<Navigate to="/tasks" replace />} />
       </Route>
     </Routes>
   );
 }
 
 function App() {
-  const liveMode = appConfig.featureFlags.realtime ? "auto" : "off";
+  const liveMode = appConfig.featureFlags.realtime ? "manual" : "off";
 
   return (
     <ErrorBoundary>

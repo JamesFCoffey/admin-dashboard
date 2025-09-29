@@ -22,6 +22,7 @@ const LatestActivities = () => {
     meta: {
       gqlQuery: DASHBOARD_LATEST_ACTIVITIES_AUDITS_QUERY,
     },
+    liveMode: "manual",
   });
   const dealIds = audit?.data?.map((audit) => audit?.targetId);
   const { data: deals, isLoading: isLoadingDeals } = useList({
@@ -32,6 +33,7 @@ const LatestActivities = () => {
     meta: {
       gqlQuery: DASHBOARD_LATEST_ACTIVITIES_DEALS_QUERY,
     },
+    liveMode: "manual",
   });
   if (isError) {
     console.log(error);

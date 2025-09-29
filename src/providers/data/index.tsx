@@ -55,5 +55,14 @@ if (!appConfig.featureFlags.realtime) {
 export const dataProvider = graphqlDataPRovider(client);
 export const liveProvider =
   appConfig.featureFlags.realtime && wsClient
-    ? graphqlLiveProvider(wsClient)
+    ? ((() => {
+        const provider = graphqlLiveProvider(wsClient);
+        return {
+          ...provider,
+          subscribe: (options: Parameters<typeof provider.subscribe>[0]) => {
+            logger.debug("[liveProvider] subscribe", options);
+            return provider.subscribe(options);
+          },
+        };
+      })())
     : undefined;

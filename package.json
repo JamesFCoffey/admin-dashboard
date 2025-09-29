@@ -35,23 +35,27 @@
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@testing-library/react": "^14.2.1",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "jsdom": "^24.1.0",
     "prettier": "^3.3.3",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "vitest": "^1.6.0"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "refine": "refine",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "test": "vitest"
   },
   "overrides": {
-    "rollup": "^2.79.2",
+    "rollup": "^4.21.0",
     "@refinedev/react-router-v6": "4.5.5"
   },
   "browserslist": {
