@@ -1,5 +1,7 @@
 # Implementation Plan & Architecture Decisions
 
+> **Note for automation**: The README is the canonical source for engineers and stakeholders. Maintain parity by mirroring key updates here when automation context is useful, but defer to `README.MD` for authoritative details.
+
 ## Target Architecture Overview
 
 - **Framework**: Next.js 14 app router hosting a refined React SPA shell executed client-side via dynamic import to keep existing Refine setup while enabling Vercel-friendly routing.
@@ -39,14 +41,23 @@
 
 5. **CI/CD & Documentation**
 
-   - Set up GitHub Actions pipeline running install, lint, typecheck, tests, build, codegen validation, and deploying to Vercel previews.
-   - Document deploy process, env vars, testing commands, and architecture overview in README.
-   - Capture maintenance runbooks (schema updates, seed scripts) and add screenshots or demos.
+   - GitHub Actions workflow (`.github/workflows/ci.yml`) runs install, lint, typecheck, tests, build, codegen verification, and deploys previews; manual promotion handles production.
+   - README documents deploy process, env vars, testing commands, architecture snapshot; runbooks live in `docs/runbooks`.
+   - Maintain assets (screenshots/Loom) under `docs/assets/` for portfolio-ready presentation.
 
 6. **Polish & Verification**
    - Run full QA checklist (tests, lint, typecheck, accessibility scan, Lighthouse).
    - Validate staging deployment on Vercel, confirm OAuth callbacks and realtime flows.
    - Gather final assets (screenshots, metrics) for resume/portfolio usage.
+
+## Completed Work (Issues 1–6)
+
+- **Environment & Routing Foundation**: Zod env loader, global error boundary/logging, Vercel-compatible rewrites, deep-link support.
+- **OAuth Authentication Upgrade**: NextAuth providers + secure cookies, Refine auth bridge, middleware enforcement, OAuth-first UI.
+- **Realtime Data & State Refactor**: Feature hooks/contexts with live subscriptions and optimistic updates across Kanban/dashboard/CRM.
+- **CRM Data Interactivity Enhancement**: Contacts/deals/events CRUD wired to live provider, dashboards/cards update instantly.
+- **Quality Tooling & Test Suite**: ESLint/Prettier/TypeScript strictness, Jest, Playwright, `npm run lint/typecheck/test/e2e`, GraphQL codegen verification.
+- **CI/CD & Documentation Overhaul**: GitHub Actions pipeline + Vercel deploys, README overhaul, runbooks for schema updates & seeding, asset directory with `.gitkeep` placeholder.
 
 ## Open Questions & Stretch Goals
 
