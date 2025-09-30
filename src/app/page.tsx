@@ -1,6 +1,6 @@
-import { ClientOnly } from "./client";
+import { ClientOnly } from './client';
 
-export const dynamic = "force-static";
+export const dynamic = 'force-static';
 
 export default function Page() {
   return <ClientOnly />;

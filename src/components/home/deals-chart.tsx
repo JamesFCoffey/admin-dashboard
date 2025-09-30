@@ -1,20 +1,20 @@
-import { DollarOutlined } from "@ant-design/icons";
-import { Alert, Card, Empty } from "antd";
-import React from "react";
-import { Text } from "../text";
-import { Area, AreaConfig } from "@ant-design/plots";
+import { DollarOutlined } from '@ant-design/icons';
+import { Alert, Card, Empty } from 'antd';
+import React from 'react';
+import { Text } from '../text';
+import { Area, AreaConfig } from '@ant-design/plots';
 
-import { useDealsChartData } from "@/utilities/hooks";
+import { useDealsChartData } from '@/utilities/hooks';
 
 const DealsChart = () => {
   const { data, isLoading, isError, error, isEmpty } = useDealsChartData();
 
   const config: AreaConfig = {
     data,
-    xField: "timeText",
-    yField: "value",
+    xField: 'timeText',
+    yField: 'value',
     isStack: false,
-    seriesField: "state",
+    seriesField: 'state',
     animation: true,
     startOnZero: false,
     smooth: true,
@@ -46,7 +46,7 @@ const DealsChart = () => {
           type="error"
           showIcon
           message="Failed to load deals insights"
-          description={error?.message || "Please try again."}
+          description={error?.message || 'Please try again.'}
         />
       );
     }
@@ -61,13 +61,13 @@ const DealsChart = () => {
   return (
     <Card
       loading={isLoading}
-      style={{ height: "100%" }}
-      headStyle={{ padding: "8px 16px" }}
-      bodyStyle={{ padding: "24px 24px 0 24px" }}
+      style={{ height: '100%' }}
+      headStyle={{ padding: '8px 16px' }}
+      bodyStyle={{ padding: '24px 24px 0 24px' }}
       title={
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <DollarOutlined />
-          <Text size="sm" style={{ marginLeft: "0.5rem" }}>
+          <Text size="sm" style={{ marginLeft: '0.5rem' }}>
             Deals
           </Text>
         </div>

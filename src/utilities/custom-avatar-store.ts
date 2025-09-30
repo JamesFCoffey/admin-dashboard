@@ -1,6 +1,6 @@
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from 'react';
 
-type AvatarResource = "companies" | "users";
+type AvatarResource = 'companies' | 'users';
 
 type AvatarMap = Record<string, string>;
 
@@ -9,7 +9,7 @@ type AvatarStoreState = {
   users: AvatarMap;
 };
 
-const STORAGE_KEY = "crm.customAvatars";
+const STORAGE_KEY = 'crm.customAvatars';
 
 const listeners = new Set<() => void>();
 
@@ -20,7 +20,7 @@ const createEmptyState = (): AvatarStoreState => ({
 
 let state: AvatarStoreState = createEmptyState();
 
-const safeWindow = typeof window !== "undefined" ? window : undefined;
+const safeWindow = typeof window !== 'undefined' ? window : undefined;
 
 const persistState = () => {
   if (!safeWindow) return;
@@ -28,8 +28,8 @@ const persistState = () => {
   try {
     safeWindow.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("Failed to persist custom avatar store", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Failed to persist custom avatar store', error);
     }
   }
 };
@@ -43,15 +43,15 @@ const hydrateState = () => {
 
     const parsed = JSON.parse(raw) as AvatarStoreState | null;
 
-    if (parsed && typeof parsed === "object") {
+    if (parsed && typeof parsed === 'object') {
       state = {
         companies: parsed.companies ?? {},
         users: parsed.users ?? {},
       } satisfies AvatarStoreState;
     }
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("Failed to hydrate custom avatar store", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Failed to hydrate custom avatar store', error);
     }
   }
 };
@@ -66,11 +66,14 @@ const emitChange = () => {
 
 const setAvatarInternal = (resource: AvatarResource, id: string, value: string | null) => {
   const current = state[resource];
-  const next: AvatarMap = value ? { ...current, [id]: value } : (() => {
-    if (!(id in current)) return current;
-    const { [id]: _removed, ...rest } = current;
-    return rest;
-  })();
+  const next: AvatarMap = value
+    ? { ...current, [id]: value }
+    : (() => {
+        if (!(id in current)) return current;
+        const rest = { ...current };
+        delete rest[id];
+        return rest;
+      })();
 
   state = {
     ...state,
@@ -141,15 +144,15 @@ export const readFileAsDataUrl = (file: File): Promise<string> => {
     const reader = new FileReader();
 
     reader.onload = () => {
-      if (typeof reader.result === "string") {
+      if (typeof reader.result === 'string') {
         resolve(reader.result);
       } else {
-        reject(new Error("Unsupported file reader result"));
+        reject(new Error('Unsupported file reader result'));
       }
     };
 
     reader.onerror = () => {
-      reject(reader.error ?? new Error("Failed to read file"));
+      reject(reader.error ?? new Error('Failed to read file'));
     };
 
     reader.readAsDataURL(file);

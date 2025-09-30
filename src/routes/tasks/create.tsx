@@ -1,11 +1,11 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from 'react-router-dom';
 
-import { useModalForm } from "@refinedev/antd";
-import { useNavigation } from "@refinedev/core";
+import { useModalForm } from '@refinedev/antd';
+import { useNavigation } from '@refinedev/core';
 
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal } from 'antd';
 
-import { CREATE_TASK_MUTATION } from "@/graphql/mutations";
+import { CREATE_TASK_MUTATION } from '@/graphql/mutations';
 
 const TasksCreatePage = () => {
   // get search params from the url
@@ -33,7 +33,7 @@ const TasksCreatePage = () => {
    */
   const { formProps, modalProps, close } = useModalForm({
     // specify the action to perform i.e., create or edit
-    action: "create",
+    action: 'create',
     // specify whether the modal should be visible by default
     defaultVisible: true,
     // specify the gql mutation to be performed
@@ -50,7 +50,7 @@ const TasksCreatePage = () => {
         close();
 
         // navigate to the list page of the tasks resource
-        list("tasks", "replace");
+        list('tasks', 'replace');
       }}
       title="Add new card"
       width={512}
@@ -62,9 +62,7 @@ const TasksCreatePage = () => {
           // on finish, call the onFinish method of useModalForm to perform the mutation
           formProps?.onFinish?.({
             ...values,
-            stageId: searchParams.get("stageId")
-              ? Number(searchParams.get("stageId"))
-              : null,
+            stageId: searchParams.get('stageId') ? Number(searchParams.get('stageId')) : null,
             userIds: [],
           });
         }}

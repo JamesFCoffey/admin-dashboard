@@ -1,34 +1,30 @@
-import { renderHook } from "@testing-library/react";
-import { describe, expect, beforeEach, vi, it } from "vitest";
-import type { Mock } from "vitest";
+import { renderHook } from '@testing-library/react';
 
-import { useDealsChartData } from "../use-deals-chart-data";
-import { mapDealsData } from "@/utilities/helpers";
-import { useList, useSubscription } from "@refinedev/core";
-import type { GetFieldsFromList } from "@refinedev/nestjs-query";
-import type { DashboardDealsChartQuery } from "@/graphql/types";
+import { useDealsChartData } from '@/utilities/hooks/use-deals-chart-data';
+import { mapDealsData } from '@/utilities/helpers';
+import { useList, useSubscription } from '@refinedev/core';
+import type { GetFieldsFromList } from '@refinedev/nestjs-query';
+import type { DashboardDealsChartQuery } from '@/graphql/types';
 
-vi.mock("@refinedev/core", async () => {
-  const actual = await vi.importActual<typeof import("@refinedev/core")>(
-    "@refinedev/core",
-  );
+jest.mock('@refinedev/core', () => {
+  const actual = jest.requireActual<typeof import('@refinedev/core')>('@refinedev/core');
 
   return {
     ...actual,
-    useList: vi.fn(),
-    useSubscription: vi.fn(),
+    useList: jest.fn(),
+    useSubscription: jest.fn(),
   };
 });
 
-const mockedUseList = useList as unknown as Mock;
-const mockedUseSubscription = useSubscription as unknown as Mock;
+const mockedUseList = useList as unknown as jest.Mock;
+const mockedUseSubscription = useSubscription as unknown as jest.Mock;
 
 type ChartNode = GetFieldsFromList<DashboardDealsChartQuery>;
 
-describe("useDealsChartData", () => {
+describe('useDealsChartData', () => {
   const wonDeal: ChartNode = {
-    id: "stage-won",
-    title: "WON",
+    id: 'stage-won',
+    title: 'WON',
     dealsAggregate: [
       {
         groupBy: {
@@ -43,8 +39,8 @@ describe("useDealsChartData", () => {
   };
 
   const lostDeal: ChartNode = {
-    id: "stage-lost",
-    title: "LOST",
+    id: 'stage-lost',
+    title: 'LOST',
     dealsAggregate: [
       {
         groupBy: {
@@ -65,13 +61,13 @@ describe("useDealsChartData", () => {
       isFetching: false,
       isError: false,
       error: null,
-      refetch: vi.fn(),
+      refetch: jest.fn(),
     }));
 
     mockedUseSubscription.mockImplementation(() => undefined);
   });
 
-  it("maps chart data from deal stages", () => {
+  it('maps chart data from deal stages', () => {
     const expected = mapDealsData([wonDeal, lostDeal]);
     const { result } = renderHook(() => useDealsChartData());
 
@@ -80,14 +76,14 @@ describe("useDealsChartData", () => {
     expect(result.current.isError).toBe(false);
   });
 
-  it("sets empty state when no data is available", () => {
+  it('sets empty state when no data is available', () => {
     mockedUseList.mockImplementation(() => ({
       data: { data: [] },
       isLoading: false,
       isFetching: false,
       isError: false,
       error: null,
-      refetch: vi.fn(),
+      refetch: jest.fn(),
     }));
 
     const { result } = renderHook(() => useDealsChartData());

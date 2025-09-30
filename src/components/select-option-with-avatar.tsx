@@ -1,27 +1,21 @@
-import CustomAvatar from "./custom-avatar";
-import { Text } from "./text";
+import CustomAvatar from './custom-avatar';
+import { Text } from './text';
 
 type Props = {
   name: string;
   avatarUrl?: string;
-  entityType?: "companies" | "users";
+  entityType?: 'companies' | 'users';
   entityId?: string | number;
-  shape?: "circle" | "square";
+  shape?: 'circle' | 'square';
 };
 
-const SelectOptionWithAvatar = ({
-  avatarUrl,
-  name,
-  shape,
-  entityType,
-  entityId,
-}: Props) => {
+const SelectOptionWithAvatar = ({ avatarUrl, name, shape, entityType, entityId }: Props) => {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
       }}
     >
       <CustomAvatar

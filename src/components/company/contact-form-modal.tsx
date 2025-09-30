@@ -1,8 +1,8 @@
-import { Form, Input, Modal, Select } from "antd";
-import type { FormInstance, SelectProps } from "antd";
+import { Form, Input, Modal, Select } from 'antd';
+import type { FormInstance, SelectProps } from 'antd';
 
-import { statusOptions } from "@/constants";
-import type { ContactFormValues } from "@/utilities/hooks";
+import { statusOptions } from '@/constants';
+import type { ContactFormValues } from '@/utilities/hooks';
 
 export type ContactFormModalProps = {
   title: string;
@@ -11,7 +11,7 @@ export type ContactFormModalProps = {
   onCancel: () => void;
   onSubmit: (values: ContactFormValues) => Promise<void> | void;
   confirmLoading?: boolean;
-  ownerOptions?: SelectProps["options"];
+  ownerOptions?: SelectProps['options'];
   ownerLoading?: boolean;
 };
 
@@ -36,15 +36,11 @@ const ContactFormModal = ({
       confirmLoading={confirmLoading}
       width={512}
     >
-      <Form<ContactFormValues>
-        form={form}
-        layout="vertical"
-        onFinish={onSubmit}
-      >
+      <Form<ContactFormValues> form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item
           label="Full name"
           name="name"
-          rules={[{ required: true, message: "Please enter a full name" }]}
+          rules={[{ required: true, message: 'Please enter a full name' }]}
         >
           <Input autoFocus placeholder="e.g. Pam Beesly" />
         </Form.Item>
@@ -52,8 +48,8 @@ const ContactFormModal = ({
           label="Email"
           name="email"
           rules={[
-            { required: true, message: "Please enter an email" },
-            { type: "email", message: "Please enter a valid email" },
+            { required: true, message: 'Please enter an email' },
+            { type: 'email', message: 'Please enter a valid email' },
           ]}
         >
           <Input placeholder="pam@dundermifflin.com" />
@@ -65,16 +61,12 @@ const ContactFormModal = ({
           <Input placeholder="e.g. +1 570-555-0199" />
         </Form.Item>
         <Form.Item label="Status" name="status">
-          <Select
-            allowClear
-            placeholder="Select a status"
-            options={statusOptions}
-          />
+          <Select allowClear placeholder="Select a status" options={statusOptions} />
         </Form.Item>
         <Form.Item
           label="Sales owner"
           name="salesOwnerId"
-          rules={[{ required: true, message: "Please select a sales owner" }]}
+          rules={[{ required: true, message: 'Please select a sales owner' }]}
         >
           <Select
             showSearch

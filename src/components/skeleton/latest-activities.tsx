@@ -1,4 +1,4 @@
-import { List, Skeleton } from "antd";
+import { List, Skeleton } from 'antd';
 
 const LatestActivitiesSkeleton = () => {
   return (
@@ -10,7 +10,7 @@ const LatestActivitiesSkeleton = () => {
             size={48}
             shape="square"
             style={{
-              borderRadius: "4px",
+              borderRadius: '4px',
             }}
           />
         }
@@ -18,7 +18,7 @@ const LatestActivitiesSkeleton = () => {
           <Skeleton.Button
             active
             style={{
-              height: "16px",
+              height: '16px',
             }}
           />
         }
@@ -26,8 +26,8 @@ const LatestActivitiesSkeleton = () => {
           <Skeleton.Button
             active
             style={{
-              width: "300px",
-              height: "16px",
+              width: '300px',
+              height: '16px',
             }}
           />
         }

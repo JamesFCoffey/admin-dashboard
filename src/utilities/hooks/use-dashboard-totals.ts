@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from "react";
-import { CrudFilters, HttpError, LiveEvent, useCustom, useSubscription } from "@refinedev/core";
+import { useCallback, useMemo } from 'react';
+import { CrudFilters, HttpError, LiveEvent, useCustom, useSubscription } from '@refinedev/core';
 
-import { DASHBOARD_TOTAL_COUNTS_QUERY } from "@/graphql/queries";
-import type { DashboardTotalCountsQuery } from "@/graphql/types";
+import { DASHBOARD_TOTAL_COUNTS_QUERY } from '@/graphql/queries';
+import type { DashboardTotalCountsQuery } from '@/graphql/types';
 
 type DashboardTotals = {
   companies: number;
@@ -26,16 +26,12 @@ const DEFAULT_TOTALS: DashboardTotals = {
   deals: 0,
 };
 
-const SUBSCRIPTION_TYPES: LiveEvent["type"][] = [
-  "created",
-  "updated",
-  "deleted",
-];
+const SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
 export const useDashboardTotals = (): UseDashboardTotalsResult => {
   const queryResult = useCustom<DashboardTotalCountsQuery>({
-    url: "",
-    method: "get",
+    url: '',
+    method: 'get',
     meta: {
       gqlQuery: DASHBOARD_TOTAL_COUNTS_QUERY,
     },
@@ -73,18 +69,15 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
   }, [refetchTotals]);
 
   const companiesSubscriptionParams = {
-    resource: "companies",
-    subscriptionType: "useList" as const,
+    resource: 'companies',
+    subscriptionType: 'useList' as const,
     filters: [] as CrudFilters,
   };
 
-  console.debug(
-    "[useDashboardTotals] subscribing to companies",
-    companiesSubscriptionParams,
-  );
+  console.debug('[useDashboardTotals] subscribing to companies', companiesSubscriptionParams);
 
   useSubscription({
-    channel: "resources/companies",
+    channel: 'resources/companies',
     types: SUBSCRIPTION_TYPES,
     params: companiesSubscriptionParams,
     meta: {
@@ -96,18 +89,15 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
   });
 
   const contactsSubscriptionParams = {
-    resource: "contacts",
-    subscriptionType: "useList" as const,
+    resource: 'contacts',
+    subscriptionType: 'useList' as const,
     filters: [] as CrudFilters,
   };
 
-  console.debug(
-    "[useDashboardTotals] subscribing to contacts",
-    contactsSubscriptionParams,
-  );
+  console.debug('[useDashboardTotals] subscribing to contacts', contactsSubscriptionParams);
 
   useSubscription({
-    channel: "resources/contacts",
+    channel: 'resources/contacts',
     types: SUBSCRIPTION_TYPES,
     params: contactsSubscriptionParams,
     meta: {
@@ -119,18 +109,15 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
   });
 
   const dealsSubscriptionParams = {
-    resource: "deals",
-    subscriptionType: "useList" as const,
+    resource: 'deals',
+    subscriptionType: 'useList' as const,
     filters: [] as CrudFilters,
   };
 
-  console.debug(
-    "[useDashboardTotals] subscribing to deals",
-    dealsSubscriptionParams,
-  );
+  console.debug('[useDashboardTotals] subscribing to deals', dealsSubscriptionParams);
 
   useSubscription({
-    channel: "resources/deals",
+    channel: 'resources/deals',
     types: SUBSCRIPTION_TYPES,
     params: dealsSubscriptionParams,
     meta: {

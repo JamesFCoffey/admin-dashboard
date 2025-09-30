@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CrudFilters,
   HttpError,
@@ -6,12 +6,12 @@ import {
   useList,
   useSubscription,
   useUpdate,
-} from "@refinedev/core";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+} from '@refinedev/core';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
-import { UPDATE_TASK_STAGE_MUTATION } from "@/graphql/mutations";
-import { TASK_STAGES_QUERY, TASKS_QUERY } from "@/graphql/queries";
-import type { TaskStagesQuery, TasksQuery } from "@/graphql/types";
+import { UPDATE_TASK_STAGE_MUTATION } from '@/graphql/mutations';
+import { TASK_STAGES_QUERY, TASKS_QUERY } from '@/graphql/queries';
+import type { TaskStagesQuery, TasksQuery } from '@/graphql/types';
 
 export type TaskBoardTask = GetFieldsFromList<TasksQuery>;
 export type TaskBoardStage = GetFieldsFromList<TaskStagesQuery>;
@@ -40,52 +40,44 @@ export type UseTaskBoardResult = {
   refetch: () => Promise<unknown>;
 };
 
-const TASKS_SUBSCRIPTION_TYPES: LiveEvent["type"][] = [
-  "created",
-  "updated",
-  "deleted",
-];
+const TASKS_SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
-const TASK_STAGES = ["TODO", "IN PROGRESS", "IN REVIEW", "DONE"];
+const TASK_STAGES = ['TODO', 'IN PROGRESS', 'IN REVIEW', 'DONE'];
 
 export const useTaskBoard = (): UseTaskBoardResult => {
-  const [optimisticError, setOptimisticError] = useState<HttpError | Error | null>(
-    null,
-  );
-  const [pendingMoves, setPendingMoves] = useState<Record<string, string | null>>(
-    {},
-  );
+  const [optimisticError, setOptimisticError] = useState<HttpError | Error | null>(null);
+  const [pendingMoves, setPendingMoves] = useState<Record<string, string | null>>({});
 
   const stagesQueryResult = useList<TaskBoardStage>({
-    resource: "taskStages",
+    resource: 'taskStages',
     filters: [
       {
-        field: "title",
-        operator: "in",
+        field: 'title',
+        operator: 'in',
         value: TASK_STAGES,
       },
     ],
-    sorters: [{ field: "createdAt", order: "asc" }],
+    sorters: [{ field: 'createdAt', order: 'asc' }],
     meta: {
       gqlQuery: TASK_STAGES_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
   const tasksQueryResult = useList<TaskBoardTask>({
-    resource: "tasks",
-    sorters: [{ field: "dueDate", order: "asc" }],
+    resource: 'tasks',
+    sorters: [{ field: 'dueDate', order: 'asc' }],
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: TASKS_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
   const { mutate } = useUpdate<TaskBoardTask>({
-    resource: "tasks",
+    resource: 'tasks',
     meta: {
       gqlMutation: UPDATE_TASK_STAGE_MUTATION,
     },
@@ -188,8 +180,7 @@ export const useTaskBoard = (): UseTaskBoardResult => {
   const isFetching = isStagesFetching || isTasksFetching;
   const isRefetching = !isLoading && isFetching;
 
-  const listError =
-    (stagesError as HttpError | null) || (tasksError as HttpError | null);
+  const listError = (stagesError as HttpError | null) || (tasksError as HttpError | null);
 
   const error = optimisticError ?? listError;
   const isError = Boolean(error);
@@ -217,7 +208,7 @@ export const useTaskBoard = (): UseTaskBoardResult => {
           values: {
             stageId: nextStageId,
           },
-          mutationMode: "pessimistic",
+          mutationMode: 'pessimistic',
           successNotification: false,
         },
         {
@@ -233,7 +224,7 @@ export const useTaskBoard = (): UseTaskBoardResult => {
             });
           },
           onError: (mutationError) => {
-            setOptimisticError(mutationError ?? new Error("Failed to update task"));
+            setOptimisticError(mutationError ?? new Error('Failed to update task'));
 
             setPendingMoves((previous) => {
               if (!(taskId in previous)) {
@@ -254,15 +245,15 @@ export const useTaskBoard = (): UseTaskBoardResult => {
   );
 
   const taskSubscriptionParams = {
-    resource: "tasks",
-    subscriptionType: "useList" as const,
+    resource: 'tasks',
+    subscriptionType: 'useList' as const,
     filters: [] as CrudFilters,
   };
 
-  console.debug("[useTaskBoard] subscribing to tasks", taskSubscriptionParams);
+  console.debug('[useTaskBoard] subscribing to tasks', taskSubscriptionParams);
 
   useSubscription({
-    channel: "resources/tasks",
+    channel: 'resources/tasks',
     types: TASKS_SUBSCRIPTION_TYPES,
     params: taskSubscriptionParams,
     meta: {
@@ -274,18 +265,15 @@ export const useTaskBoard = (): UseTaskBoardResult => {
   });
 
   const taskStagesSubscriptionParams = {
-    resource: "taskStages",
-    subscriptionType: "useList" as const,
+    resource: 'taskStages',
+    subscriptionType: 'useList' as const,
     filters: [] as CrudFilters,
   };
 
-  console.debug(
-    "[useTaskBoard] subscribing to taskStages",
-    taskStagesSubscriptionParams,
-  );
+  console.debug('[useTaskBoard] subscribing to taskStages', taskStagesSubscriptionParams);
 
   useSubscription({
-    channel: "resources/taskStages",
+    channel: 'resources/taskStages',
     types: TASKS_SUBSCRIPTION_TYPES,
     params: taskStagesSubscriptionParams,
     meta: {

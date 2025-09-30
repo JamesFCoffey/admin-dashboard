@@ -1,7 +1,7 @@
-import { Form, Input, InputNumber, Modal, Select } from "antd";
-import type { FormInstance, SelectProps } from "antd";
+import { Form, Input, InputNumber, Modal, Select } from 'antd';
+import type { FormInstance, SelectProps } from 'antd';
 
-import type { DealFormValues } from "@/utilities/hooks";
+import type { DealFormValues } from '@/utilities/hooks';
 
 export type DealFormModalProps = {
   title: string;
@@ -10,15 +10,15 @@ export type DealFormModalProps = {
   onCancel: () => void;
   onSubmit: (values: DealFormValues) => Promise<void> | void;
   confirmLoading?: boolean;
-  companyOptions?: SelectProps["options"];
-  ownerOptions?: SelectProps["options"];
-  stageOptions?: SelectProps["options"];
+  companyOptions?: SelectProps['options'];
+  ownerOptions?: SelectProps['options'];
+  stageOptions?: SelectProps['options'];
   companyLoading?: boolean;
   ownerLoading?: boolean;
   stageLoading?: boolean;
-  companyOnSearch?: SelectProps["onSearch"];
-  ownerOnSearch?: SelectProps["onSearch"];
-  stageOnSearch?: SelectProps["onSearch"];
+  companyOnSearch?: SelectProps['onSearch'];
+  ownerOnSearch?: SelectProps['onSearch'];
+  stageOnSearch?: SelectProps['onSearch'];
 };
 
 const DealFormModal = ({
@@ -49,15 +49,11 @@ const DealFormModal = ({
       confirmLoading={confirmLoading}
       width={560}
     >
-      <Form<DealFormValues>
-        form={form}
-        layout="vertical"
-        onFinish={onSubmit}
-      >
+      <Form<DealFormValues> form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item
           label="Deal title"
           name="title"
-          rules={[{ required: true, message: "Please enter a deal title" }]}
+          rules={[{ required: true, message: 'Please enter a deal title' }]}
         >
           <Input autoFocus placeholder="e.g. Annual software renewal" />
         </Form.Item>
@@ -65,7 +61,7 @@ const DealFormModal = ({
           <InputNumber
             min={0}
             step={1000}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             prefix="$"
             placeholder="e.g. 25000"
           />
@@ -73,7 +69,7 @@ const DealFormModal = ({
         <Form.Item
           label="Company"
           name="companyId"
-          rules={[{ required: true, message: "Please select a company" }]}
+          rules={[{ required: true, message: 'Please select a company' }]}
         >
           <Select
             showSearch
@@ -88,7 +84,7 @@ const DealFormModal = ({
         <Form.Item
           label="Owner"
           name="dealOwnerId"
-          rules={[{ required: true, message: "Please assign an owner" }]}
+          rules={[{ required: true, message: 'Please assign an owner' }]}
         >
           <Select
             showSearch
@@ -103,7 +99,7 @@ const DealFormModal = ({
         <Form.Item
           label="Stage"
           name="stageId"
-          rules={[{ required: true, message: "Please select a stage" }]}
+          rules={[{ required: true, message: 'Please select a stage' }]}
         >
           <Select
             showSearch

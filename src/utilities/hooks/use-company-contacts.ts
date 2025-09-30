@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTable } from "@refinedev/antd";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTable } from '@refinedev/antd';
 import {
   CrudFilters,
   HttpError,
@@ -8,22 +8,22 @@ import {
   useDelete,
   useSubscription,
   useUpdate,
-} from "@refinedev/core";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+} from '@refinedev/core';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
 import {
   CREATE_CONTACT_MUTATION,
   DELETE_CONTACT_MUTATION,
   UPDATE_CONTACT_MUTATION,
-} from "@/graphql/mutations";
-import { COMPANY_CONTACTS_TABLE_QUERY } from "@/graphql/queries";
+} from '@/graphql/mutations';
+import { COMPANY_CONTACTS_TABLE_QUERY } from '@/graphql/queries';
 import type {
   CompanyContactsTableQuery,
   CreateContactMutation,
   DeleteContactMutation,
   UpdateContactMutation,
-} from "@/graphql/types";
-import { logger } from "@/utilities/logger";
+} from '@/graphql/types';
+import { logger } from '@/utilities/logger';
 
 export type CompanyContact = GetFieldsFromList<CompanyContactsTableQuery>;
 
@@ -32,12 +32,12 @@ export type ContactFormValues = {
   email: string;
   jobTitle?: string | null;
   phone?: string | null;
-  status?: CompanyContact["status"] | null;
+  status?: CompanyContact['status'] | null;
   salesOwnerId: string;
 };
 
 export type ContactUpsertPayload = ContactFormValues & {
-  salesOwner?: CompanyContact["salesOwner"];
+  salesOwner?: CompanyContact['salesOwner'];
 };
 
 type OptimisticContact = CompanyContact & { __optimistic: true };
@@ -48,45 +48,38 @@ type PendingState = {
   deleted: Set<string>;
 };
 
-const SUBSCRIPTION_TYPES: LiveEvent["type"][] = [
-  "created",
-  "updated",
-  "deleted",
-];
+const SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
 export const useCompanyContacts = (companyId?: string) => {
-  const {
-    tableProps,
-    tableQueryResult,
-  } = useTable<CompanyContact>({
-    resource: "contacts",
+  const { tableProps, tableQueryResult } = useTable<CompanyContact>({
+    resource: 'contacts',
     syncWithLocation: false,
     sorters: {
       initial: [
         {
-          field: "createdAt",
-          order: "desc",
+          field: 'createdAt',
+          order: 'desc',
         },
       ],
     },
     filters: {
       initial: [
         {
-          field: "jobTitle",
-          operator: "contains" as const,
+          field: 'jobTitle',
+          operator: 'contains' as const,
           value: undefined,
         },
         {
-          field: "name",
-          operator: "contains" as const,
-          value: "",
+          field: 'name',
+          operator: 'contains' as const,
+          value: '',
         },
       ],
       permanent: companyId
         ? [
             {
-              field: "company.id",
-              operator: "eq" as const,
+              field: 'company.id',
+              operator: 'eq' as const,
               value: companyId,
             },
           ]
@@ -95,24 +88,24 @@ export const useCompanyContacts = (companyId?: string) => {
     meta: {
       gqlQuery: COMPANY_CONTACTS_TABLE_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
     queryOptions: {
       enabled: Boolean(companyId),
     },
   });
 
-  const {
-    mutateAsync: createContactMutateAsync,
-    isLoading: isCreateLoading,
-  } = useCreate<CreateContactMutation, HttpError>();
-  const {
-    mutateAsync: updateContactMutateAsync,
-    isLoading: isUpdateLoading,
-  } = useUpdate<UpdateContactMutation, HttpError>();
-  const {
-    mutateAsync: deleteContactMutateAsync,
-    isLoading: isDeleteLoading,
-  } = useDelete<DeleteContactMutation, HttpError>();
+  const { mutateAsync: createContactMutateAsync, isLoading: isCreateLoading } = useCreate<
+    CreateContactMutation,
+    HttpError
+  >();
+  const { mutateAsync: updateContactMutateAsync, isLoading: isUpdateLoading } = useUpdate<
+    UpdateContactMutation,
+    HttpError
+  >();
+  const { mutateAsync: deleteContactMutateAsync, isLoading: isDeleteLoading } = useDelete<
+    DeleteContactMutation,
+    HttpError
+  >();
 
   const [pending, setPending] = useState<PendingState>(() => ({
     created: {},
@@ -193,7 +186,7 @@ export const useCompanyContacts = (companyId?: string) => {
 
   const paginationConfig = tableProps?.pagination;
   const baseTotal =
-    paginationConfig && typeof paginationConfig === "object" && "total" in paginationConfig
+    paginationConfig && typeof paginationConfig === 'object' && 'total' in paginationConfig
       ? (paginationConfig.total ?? baseContacts.length)
       : baseContacts.length;
   const totalCount = baseTotal + Object.keys(pending.created).length - pending.deleted.size;
@@ -264,12 +257,14 @@ export const useCompanyContacts = (companyId?: string) => {
   const createContact = useCallback(
     async ({ salesOwner, status, ...values }: ContactUpsertPayload) => {
       if (!companyId) {
-        throw new Error("A company id is required to create a contact.");
+        throw new Error('A company id is required to create a contact.');
       }
 
-      const optimisticId = `optimistic-${Date.now()}-${Math.random()
-        .toString(16)
-        .slice(2)}`;
+      if (!salesOwner) {
+        throw new Error('A sales owner is required to create a contact.');
+      }
+
+      const optimisticId = `optimistic-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
       const optimisticContact: OptimisticContact = {
         id: optimisticId,
@@ -277,11 +272,12 @@ export const useCompanyContacts = (companyId?: string) => {
         email: values.email,
         jobTitle: values.jobTitle ?? null,
         phone: values.phone ?? null,
-        status: status ?? "NEW",
+        status: status ?? 'NEW',
         avatarUrl: null,
-        salesOwner: salesOwner ?? null,
+        createdAt: new Date().toISOString(),
+        salesOwner,
         __optimistic: true,
-      };
+      } as OptimisticContact;
 
       setPending((previous) => ({
         ...previous,
@@ -293,10 +289,10 @@ export const useCompanyContacts = (companyId?: string) => {
 
       try {
         const result = await createContactMutateAsync({
-          resource: "contacts",
+          resource: 'contacts',
           values: {
             ...values,
-            status: status ?? "NEW",
+            status: status ?? 'NEW',
             companyId,
           },
           meta: {
@@ -304,7 +300,7 @@ export const useCompanyContacts = (companyId?: string) => {
           },
         });
 
-        logger.debug("[useCompanyContacts] createContact result", result);
+        logger.debug('[useCompanyContacts] createContact result', result);
 
         if (tableQueryResult?.refetch) {
           await tableQueryResult.refetch();
@@ -323,9 +319,15 @@ export const useCompanyContacts = (companyId?: string) => {
 
       const existing = contacts.find((contact) => String(contact.id) === contactId) ?? null;
 
-      const nextStatus = status === null ? null : status ?? existing?.status ?? "NEW";
+      const nextStatus = status === null ? null : (status ?? existing?.status ?? 'NEW');
 
       const baseContact = (existing ?? {}) as Partial<CompanyContact>;
+
+      const resolvedSalesOwner = salesOwner ?? existing?.salesOwner;
+
+      if (!resolvedSalesOwner) {
+        throw new Error('A sales owner is required to update a contact.');
+      }
 
       const optimisticContact: CompanyContact = {
         ...baseContact,
@@ -336,7 +338,7 @@ export const useCompanyContacts = (companyId?: string) => {
         phone: values.phone ?? null,
         status: nextStatus,
         avatarUrl: existing?.avatarUrl ?? null,
-        salesOwner: salesOwner ?? existing?.salesOwner ?? null,
+        salesOwner: resolvedSalesOwner,
       } as CompanyContact;
 
       setPending((previous) => ({
@@ -349,11 +351,11 @@ export const useCompanyContacts = (companyId?: string) => {
 
       try {
         await updateContactMutateAsync({
-          resource: "contacts",
+          resource: 'contacts',
           id,
           values: {
             ...values,
-            status: status === null ? null : status ?? undefined,
+            status: status === null ? null : (status ?? undefined),
           },
           meta: {
             gqlMutation: UPDATE_CONTACT_MUTATION,
@@ -386,7 +388,7 @@ export const useCompanyContacts = (companyId?: string) => {
 
       try {
         await deleteContactMutateAsync({
-          resource: "contacts",
+          resource: 'contacts',
           id,
           meta: {
             gqlMutation: DELETE_CONTACT_MUTATION,
@@ -404,17 +406,17 @@ export const useCompanyContacts = (companyId?: string) => {
   );
 
   useSubscription({
-    channel: "resources/contacts",
+    channel: 'resources/contacts',
     enabled: Boolean(companyId),
     types: SUBSCRIPTION_TYPES,
     params: {
-      resource: "contacts",
-      subscriptionType: "useList" as const,
+      resource: 'contacts',
+      subscriptionType: 'useList' as const,
       filters: (companyId
         ? [
             {
-              field: "company.id",
-              operator: "eq" as const,
+              field: 'company.id',
+              operator: 'eq' as const,
               value: companyId,
             },
           ]
@@ -424,7 +426,7 @@ export const useCompanyContacts = (companyId?: string) => {
       gqlQuery: COMPANY_CONTACTS_TABLE_QUERY,
     },
     onLiveEvent: () => {
-      logger.debug("[useCompanyContacts] live event received, refetching contacts");
+      logger.debug('[useCompanyContacts] live event received, refetching contacts');
       if (tableQueryResult?.refetch) {
         void tableQueryResult.refetch();
       }

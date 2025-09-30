@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { FilterDropdown, useSelect } from "@refinedev/antd";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { FilterDropdown, useSelect } from '@refinedev/antd';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
 import {
   DeleteOutlined,
@@ -12,25 +12,21 @@ import {
   PlusOutlined,
   SearchOutlined,
   TeamOutlined,
-} from "@ant-design/icons";
-import { App, Button, Card, Form, Input, Select, Space, Table, Tooltip } from "antd";
+} from '@ant-design/icons';
+import { App, Button, Card, Form, Input, Select, Space, Table, Tooltip } from 'antd';
 
-import { statusOptions } from "@/constants";
-import { USERS_SELECT_QUERY } from "@/graphql/queries";
-import type { CompanyContactsTableQuery, UsersSelectQuery } from "@/graphql/types";
+import { statusOptions } from '@/constants';
+import { USERS_SELECT_QUERY } from '@/graphql/queries';
+import type { CompanyContactsTableQuery, UsersSelectQuery } from '@/graphql/types';
 
-import { Text } from "@/components/text";
-import CustomAvatar from "@/components/custom-avatar";
-import { ContactStatusTag } from "@/components/tags/contact-status-tag";
-import ContactFormModal from "@/components/company/contact-form-modal";
-import SelectOptionWithAvatar from "@/components/select-option-with-avatar";
-import {
-  type CompanyContact,
-  type ContactFormValues,
-  useCompanyContacts,
-} from "@/utilities/hooks";
+import { Text } from '@/components/text';
+import CustomAvatar from '@/components/custom-avatar';
+import { ContactStatusTag } from '@/components/tags/contact-status-tag';
+import ContactFormModal from '@/components/company/contact-form-modal';
+import SelectOptionWithAvatar from '@/components/select-option-with-avatar';
+import { type CompanyContact, type ContactFormValues, useCompanyContacts } from '@/utilities/hooks';
 
-import { logger } from "@/utilities/logger";
+import { logger } from '@/utilities/logger';
 
 type Contact = GetFieldsFromList<CompanyContactsTableQuery>;
 
@@ -63,14 +59,13 @@ export const CompanyContactsTable = () => {
     isDeleteLoading,
   } = useCompanyContacts(companyId);
 
-  const {
-    selectProps: rawOwnerSelectProps,
-    queryResult: usersQueryResult,
-  } = useSelect<GetFieldsFromList<UsersSelectQuery>>({
-    resource: "users",
-    optionLabel: "name",
+  const { selectProps: rawOwnerSelectProps, queryResult: usersQueryResult } = useSelect<
+    GetFieldsFromList<UsersSelectQuery>
+  >({
+    resource: 'users',
+    optionLabel: 'name',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: USERS_SELECT_QUERY,
@@ -116,16 +111,19 @@ export const CompanyContactsTable = () => {
             />
           ),
         }))
-      : rawOwnerSelectProps.options ?? [];
+      : (rawOwnerSelectProps.options ?? []);
 
-    if (editingContact?.salesOwner && !base.find((option) => option?.value === String(editingContact.salesOwner?.id))) {
+    if (
+      editingContact?.salesOwner &&
+      !base.find((option) => option?.value === String(editingContact.salesOwner?.id))
+    ) {
       return [
         ...base,
         {
           value: String(editingContact.salesOwner.id),
           label: (
             <SelectOptionWithAvatar
-              name={editingContact.salesOwner.name ?? "Unknown"}
+              name={editingContact.salesOwner.name ?? 'Unknown'}
               avatarUrl={editingContact.salesOwner.avatarUrl ?? undefined}
               entityType="users"
               entityId={editingContact.salesOwner.id}
@@ -147,7 +145,9 @@ export const CompanyContactsTable = () => {
       return;
     }
 
-    const existingOwnerId = editingContact.salesOwner?.id ? String(editingContact.salesOwner.id) : undefined;
+    const existingOwnerId = editingContact.salesOwner?.id
+      ? String(editingContact.salesOwner.id)
+      : undefined;
     const resolvedOwnerId = ensureValidOwnerId(existingOwnerId);
 
     if (existingOwnerId && resolvedOwnerId && existingOwnerId !== resolvedOwnerId) {
@@ -157,15 +157,17 @@ export const CompanyContactsTable = () => {
         if (fallbackOwner) {
           message.info(`Previous owner is unavailable, reassigned to ${fallbackOwner.name}.`);
         } else {
-          message.warning("Previous owner is unavailable. Please select a new owner before saving.");
+          message.warning(
+            'Previous owner is unavailable. Please select a new owner before saving.',
+          );
         }
         missingOwnerNotifiedRef.current = key;
       }
     }
 
     editForm.setFieldsValue({
-      name: editingContact.name ?? "",
-      email: editingContact.email ?? "",
+      name: editingContact.name ?? '',
+      email: editingContact.email ?? '',
       jobTitle: editingContact.jobTitle ?? undefined,
       phone: editingContact.phone ?? undefined,
       status: editingContact.status ?? undefined,
@@ -185,52 +187,57 @@ export const CompanyContactsTable = () => {
   const handleOpenCreateModal = () => {
     createForm.resetFields();
     createForm.setFieldsValue({
-      status: "NEW",
+      status: 'NEW',
       salesOwnerId: ensureValidOwnerId(fallbackOwnerId) ?? fallbackOwnerId,
     });
     setIsCreateModalOpen(true);
   };
 
-  const getOwnerPayload = (ownerId?: string | null) => {
+  const getOwnerPayload = (ownerId?: string | null): CompanyContact['salesOwner'] | undefined => {
     const resolvedOwnerId = ensureValidOwnerId(ownerId);
 
     if (!resolvedOwnerId) {
-      return null;
+      return undefined;
     }
 
     const owner = ownerLookup[resolvedOwnerId];
     if (!owner) {
-      return null;
+      return undefined;
     }
 
     return {
       id: String(owner.id),
       name: owner.name,
       avatarUrl: owner.avatarUrl,
-    } as CompanyContact["salesOwner"];
+    } as CompanyContact['salesOwner'];
   };
 
   const handleCreateSubmit = async (values: ContactFormValues) => {
     const ownerId = ensureValidOwnerId(values.salesOwnerId);
     if (!ownerId) {
-      message.error("Please select a valid sales owner before saving.");
+      message.error('Please select a valid sales owner before saving.');
+      return;
+    }
+
+    const ownerPayload = getOwnerPayload(ownerId);
+    if (!ownerPayload) {
+      message.error('Please select a valid sales owner before saving.');
       return;
     }
 
     try {
       await createContact({
         ...values,
-        status: values.status ?? "NEW",
+        status: values.status ?? 'NEW',
         salesOwnerId: ownerId,
-        salesOwner: getOwnerPayload(ownerId),
+        salesOwner: ownerPayload,
       });
-      message.success("Contact created successfully");
+      message.success('Contact created successfully');
       setIsCreateModalOpen(false);
       createForm.resetFields();
     } catch (error) {
-      logger.error("Failed to create contact", error);
-      const description =
-        error instanceof Error ? error.message : "Unable to create contact";
+      logger.error('Failed to create contact', error);
+      const description = error instanceof Error ? error.message : 'Unable to create contact';
       message.error(description);
     }
   };
@@ -247,7 +254,13 @@ export const CompanyContactsTable = () => {
 
     const ownerId = ensureValidOwnerId(values.salesOwnerId);
     if (!ownerId) {
-      message.error("Please select a valid sales owner before saving.");
+      message.error('Please select a valid sales owner before saving.');
+      return;
+    }
+
+    const ownerPayload = getOwnerPayload(ownerId);
+    if (!ownerPayload) {
+      message.error('Please select a valid sales owner before saving.');
       return;
     }
 
@@ -256,14 +269,13 @@ export const CompanyContactsTable = () => {
         ...values,
         status: values.status ?? null,
         salesOwnerId: ownerId,
-        salesOwner: getOwnerPayload(ownerId),
+        salesOwner: ownerPayload,
       });
-      message.success("Contact updated successfully");
+      message.success('Contact updated successfully');
       handleCloseEditModal();
     } catch (error) {
-      logger.error("Failed to update contact", error);
-      const description =
-        error instanceof Error ? error.message : "Unable to update contact";
+      logger.error('Failed to update contact', error);
+      const description = error instanceof Error ? error.message : 'Unable to update contact';
       message.error(description);
     }
   };
@@ -273,18 +285,17 @@ export const CompanyContactsTable = () => {
 
     modal.confirm({
       title: `Remove ${contact.name}?`,
-      content: "This contact will be removed from the company and dashboard totals.",
-      okText: "Delete",
-      okType: "danger",
-      autoFocusButton: "cancel",
+      content: 'This contact will be removed from the company and dashboard totals.',
+      okText: 'Delete',
+      okType: 'danger',
+      autoFocusButton: 'cancel',
       async onOk() {
         try {
           await deleteContact(contactId);
-          message.success("Contact removed");
+          message.success('Contact removed');
         } catch (error) {
-          logger.error("Failed to delete contact", error);
-          const description =
-            error instanceof Error ? error.message : "Unable to delete contact";
+          logger.error('Failed to delete contact', error);
+          const description = error instanceof Error ? error.message : 'Unable to delete contact';
           message.error(description);
           throw error;
         }
@@ -298,8 +309,8 @@ export const CompanyContactsTable = () => {
   return (
     <Card
       headStyle={{
-        borderBottom: "1px solid #D9D9D9",
-        marginBottom: "1px",
+        borderBottom: '1px solid #D9D9D9',
+        marginBottom: '1px',
       }}
       bodyStyle={{ padding: 0 }}
       title={
@@ -342,7 +353,7 @@ export const CompanyContactsTable = () => {
               <CustomAvatar name={record.name} src={record.avatarUrl ?? undefined} />
               <Text
                 style={{
-                  whiteSpace: "nowrap",
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {record.name}
@@ -373,7 +384,7 @@ export const CompanyContactsTable = () => {
           filterDropdown={(props) => (
             <FilterDropdown {...props}>
               <Select
-                style={{ width: "200px" }}
+                style={{ width: '200px' }}
                 mode="multiple"
                 placeholder="Select Stage"
                 options={statusOptions}
@@ -391,7 +402,7 @@ export const CompanyContactsTable = () => {
 
             return (
               <Space>
-                <Tooltip title={hasEmail ? "Email" : "Email unavailable"}>
+                <Tooltip title={hasEmail ? 'Email' : 'Email unavailable'}>
                   <Button
                     size="small"
                     href={hasEmail ? `mailto:${record.email}` : undefined}
@@ -399,7 +410,7 @@ export const CompanyContactsTable = () => {
                     disabled={!hasEmail}
                   />
                 </Tooltip>
-                <Tooltip title={hasPhone ? "Call" : "Phone unavailable"}>
+                <Tooltip title={hasPhone ? 'Call' : 'Phone unavailable'}>
                   <Button
                     size="small"
                     href={hasPhone ? `tel:${record.phone}` : undefined}
@@ -417,7 +428,9 @@ export const CompanyContactsTable = () => {
           width={148}
           render={(_, record) => {
             const contactId = String(record.id);
-            const isOptimistic = Boolean((record as CompanyContact & { __optimistic?: boolean }).__optimistic);
+            const isOptimistic = Boolean(
+              (record as CompanyContact & { __optimistic?: boolean }).__optimistic,
+            );
             const isUpdating = pendingUpdateSet.has(contactId);
             const isDeleting = pendingDeleteSet.has(contactId);
 
@@ -432,8 +445,8 @@ export const CompanyContactsTable = () => {
                     onClick={() => {
                       setEditingContact(record as CompanyContact);
                       editForm.setFieldsValue({
-                        name: record.name ?? "",
-                        email: record.email ?? "",
+                        name: record.name ?? '',
+                        email: record.email ?? '',
                         jobTitle: record.jobTitle ?? undefined,
                         phone: record.phone ?? undefined,
                         status: record.status ?? undefined,
@@ -475,7 +488,7 @@ export const CompanyContactsTable = () => {
       />
 
       <ContactFormModal
-        title={`Edit ${editingContact?.name ?? "contact"}`}
+        title={`Edit ${editingContact?.name ?? 'contact'}`}
         open={Boolean(editingContact)}
         form={editForm}
         ownerOptions={ownerOptions}

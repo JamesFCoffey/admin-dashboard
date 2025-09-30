@@ -1,30 +1,31 @@
-import { UnorderedListOutlined } from "@ant-design/icons";
-import { Card, List, Space } from "antd";
-import React, { useEffect, useMemo } from "react";
-import { Text } from "../text";
-import LatestActivitiesSkeleton from "../skeleton/latest-activities";
-import { LiveEvent, useList, useSubscription } from "@refinedev/core";
-import { useSelect } from "@refinedev/antd";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { UnorderedListOutlined } from '@ant-design/icons';
+import { Card, List, Space } from 'antd';
+import React, { useEffect, useMemo } from 'react';
+import { Text } from '../text';
+import LatestActivitiesSkeleton from '../skeleton/latest-activities';
+import { LiveEvent, useList, useSubscription } from '@refinedev/core';
+import { useSelect } from '@refinedev/antd';
 import {
   COMPANIES_SELECT_QUERY,
   DASHBOARD_LATEST_ACTIVITIES_AUDITS_QUERY,
   DASHBOARD_LATEST_ACTIVITIES_DEALS_QUERY,
   DEAL_STAGES_SELECT_QUERY,
-} from "@/graphql/queries";
+} from '@/graphql/queries';
 import type {
   DashboardLatestActivitiesAuditsQuery,
   DashboardLatestActivitiesDealsQuery,
   CompaniesSelectQuery,
   DealStagesSelectQuery,
-} from "@/graphql/types";
-import dayjs from "dayjs";
-import CustomAvatar from "../custom-avatar";
+} from '@/graphql/types';
+import dayjs from 'dayjs';
+import CustomAvatar from '../custom-avatar';
+import type { AvatarResource } from '@/utilities/custom-avatar-store';
 
-type AuditNode = NonNullable<
-  GetFieldsFromList<DashboardLatestActivitiesAuditsQuery>["data"][number]
->;
-type AuditChangeNode = AuditNode["changes"][number];
+type AuditNode = DashboardLatestActivitiesAuditsQuery['audits']['nodes'][number];
+type AuditChangeNode = AuditNode['changes'][number];
+type DealNode = DashboardLatestActivitiesDealsQuery['deals']['nodes'][number];
+type StageNode = DealStagesSelectQuery['dealStages']['nodes'][number];
+type CompanyNode = CompaniesSelectQuery['companies']['nodes'][number];
 
 const normalizeTargetEntityName = (entity?: string | null) => {
   if (!entity) {
@@ -32,7 +33,7 @@ const normalizeTargetEntityName = (entity?: string | null) => {
   }
 
   const withNamespaceRemoved = entity.split(/[\\/]/).pop() ?? entity;
-  const trimmed = withNamespaceRemoved.replace(/Entity$/i, "").trim();
+  const trimmed = withNamespaceRemoved.replace(/Entity$/i, '').trim();
 
   if (!trimmed) {
     return undefined;
@@ -45,7 +46,7 @@ const getEntityDisplayName = (entity?: string | null) => {
   const normalized = normalizeTargetEntityName(entity);
 
   if (!normalized) {
-    return "record";
+    return 'record';
   }
 
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
@@ -57,10 +58,10 @@ const getChangeValue = (changes: AuditChangeNode[] | undefined, fields: string[]
   }
 
   const targetFields = new Set(fields.map((field) => field.toLowerCase()));
-  const match = changes.find((change) => targetFields.has((change.field ?? "").toLowerCase()));
+  const match = changes.find((change) => targetFields.has((change.field ?? '').toLowerCase()));
   const value = match?.to ?? match?.from;
 
-  if (typeof value === "string" && value.trim().length > 0) {
+  if (typeof value === 'string' && value.trim().length > 0) {
     return value.trim();
   }
 
@@ -72,7 +73,9 @@ const getCompanyIdFromChanges = (changes: AuditChangeNode[] | undefined) => {
     return undefined;
   }
 
-  const companyChange = changes.find((change) => (change.field ?? "").toLowerCase() === "companyid");
+  const companyChange = changes.find(
+    (change) => (change.field ?? '').toLowerCase() === 'companyid',
+  );
 
   if (!companyChange || companyChange.to == null) {
     return undefined;
@@ -81,7 +84,7 @@ const getCompanyIdFromChanges = (changes: AuditChangeNode[] | undefined) => {
   return String(companyChange.to);
 };
 
-const SUBSCRIPTION_TYPES: LiveEvent["type"][] = ["created", "updated", "deleted"];
+const SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
 const LatestActivities = () => {
   const {
@@ -90,12 +93,12 @@ const LatestActivities = () => {
     isError: isAuditError,
     error: auditsError,
     refetch: refetchAudits,
-  } = useList<GetFieldsFromList<DashboardLatestActivitiesAuditsQuery>>({
-    resource: "audits",
+  } = useList<AuditNode>({
+    resource: 'audits',
     sorters: [
       {
-        field: "createdAt",
-        order: "desc",
+        field: 'createdAt',
+        order: 'desc',
       },
     ],
     pagination: {
@@ -104,7 +107,7 @@ const LatestActivities = () => {
     meta: {
       gqlQuery: DASHBOARD_LATEST_ACTIVITIES_AUDITS_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
   const auditEntries = useMemo(
     () => (audit?.data ?? []).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry)),
@@ -112,8 +115,8 @@ const LatestActivities = () => {
   );
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      console.debug("[LatestActivities] audit entries", auditEntries);
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('[LatestActivities] audit entries', auditEntries);
     }
   }, [auditEntries]);
 
@@ -127,7 +130,7 @@ const LatestActivities = () => {
 
       const entity = normalizeTargetEntityName(entry.targetEntity);
 
-      if (entity === "deal") {
+      if (entity === 'deal') {
         ids.add(String(entry.targetId));
       }
     });
@@ -145,7 +148,7 @@ const LatestActivities = () => {
 
       const entity = normalizeTargetEntityName(entry.targetEntity);
 
-      if (entry.targetId && entity === "company") {
+      if (entry.targetId && entity === 'company') {
         ids.add(String(entry.targetId));
       }
 
@@ -163,16 +166,16 @@ const LatestActivities = () => {
     isError: isDealsError,
     error: dealsError,
     refetch: refetchDeals,
-  } = useList<GetFieldsFromList<DashboardLatestActivitiesDealsQuery>>({
-    resource: "deals",
+  } = useList<DealNode>({
+    resource: 'deals',
     queryOptions: { enabled: uniqueDealIds.length > 0 },
-    pagination: { mode: "off" },
+    pagination: { mode: 'off' },
     filters:
       uniqueDealIds.length > 0
         ? [
             {
-              field: "id",
-              operator: "in",
+              field: 'id',
+              operator: 'in',
               value: uniqueDealIds,
             },
           ]
@@ -180,15 +183,15 @@ const LatestActivities = () => {
     meta: {
       gqlQuery: DASHBOARD_LATEST_ACTIVITIES_DEALS_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
   useSubscription({
-    channel: "resources/audits",
+    channel: 'resources/audits',
     types: SUBSCRIPTION_TYPES,
     params: {
-      resource: "audits",
-      subscriptionType: "useList",
+      resource: 'audits',
+      subscriptionType: 'useList',
       filters: [],
     },
     meta: {
@@ -200,11 +203,11 @@ const LatestActivities = () => {
   });
 
   useSubscription({
-    channel: "resources/deals",
+    channel: 'resources/deals',
     types: SUBSCRIPTION_TYPES,
     params: {
-      resource: "deals",
-      subscriptionType: "useList",
+      resource: 'deals',
+      subscriptionType: 'useList',
       filters: [],
     },
     meta: {
@@ -215,11 +218,11 @@ const LatestActivities = () => {
     },
   });
 
-  const { queryResult: stagesQueryResult } = useSelect<GetFieldsFromList<DealStagesSelectQuery>>({
-    resource: "dealStages",
-    optionLabel: "title",
+  const { queryResult: stagesQueryResult } = useSelect<StageNode>({
+    resource: 'dealStages',
+    optionLabel: 'title',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: DEAL_STAGES_SELECT_QUERY,
@@ -232,16 +235,16 @@ const LatestActivities = () => {
     data: companies,
     isError: isCompaniesError,
     error: companiesError,
-  } = useList<GetFieldsFromList<CompaniesSelectQuery>>({
-    resource: "companies",
+  } = useList<CompanyNode>({
+    resource: 'companies',
     queryOptions: { enabled: uniqueCompanyIds.length > 0 },
-    pagination: { mode: "off" },
+    pagination: { mode: 'off' },
     filters:
       uniqueCompanyIds.length > 0
         ? [
             {
-              field: "id",
-              operator: "in",
+              field: 'id',
+              operator: 'in',
               value: uniqueCompanyIds,
             },
           ]
@@ -249,7 +252,7 @@ const LatestActivities = () => {
     meta: {
       gqlQuery: COMPANIES_SELECT_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
   const stageTitleLookup = useMemo(() => {
@@ -290,27 +293,32 @@ const LatestActivities = () => {
 
         const targetId = item.targetId != null ? String(item.targetId) : undefined;
         const normalizedEntity = normalizeTargetEntityName(item.targetEntity);
-        const isDealAudit = normalizedEntity === "deal";
-        const isCompanyAudit = normalizedEntity === "company";
+        const isDealAudit = normalizedEntity === 'deal';
+        const isCompanyAudit = normalizedEntity === 'company';
 
         const derivedCompanyId = getCompanyIdFromChanges(item.changes);
 
         const deal = isDealAudit && targetId ? dealLookup[targetId] : undefined;
         const companyFromTarget = isCompanyAudit && targetId ? companyLookup[targetId] : undefined;
-        const company = companyFromTarget ?? deal?.company ?? (derivedCompanyId ? companyLookup[derivedCompanyId] : undefined);
+        const company =
+          companyFromTarget ??
+          deal?.company ??
+          (derivedCompanyId ? companyLookup[derivedCompanyId] : undefined);
 
-        const actor = item.user?.name ?? "System";
+        const actor = item.user?.name ?? 'System';
         const action = item.action?.toUpperCase();
         const stageChange = item.changes?.find(
-          (change) => (change.field ?? "").toLowerCase() === "stageid",
+          (change) => (change.field ?? '').toLowerCase() === 'stageid',
         );
-        const fromStage = stageChange?.from ? stageTitleLookup[String(stageChange.from)] ?? stageChange.from : undefined;
+        const fromStage = stageChange?.from
+          ? (stageTitleLookup[String(stageChange.from)] ?? stageChange.from)
+          : undefined;
         const toStage = stageChange?.to
-          ? stageTitleLookup[String(stageChange.to)] ?? stageChange.to
+          ? (stageTitleLookup[String(stageChange.to)] ?? stageChange.to)
           : deal?.stage?.title;
         const companyName = company?.name ?? deal?.company?.name;
         const displayEntityName = getEntityDisplayName(item.targetEntity);
-        const changeLabel = getChangeValue(item.changes, ["title", "name", "fullName"]);
+        const changeLabel = getChangeValue(item.changes, ['title', 'name', 'fullName']);
         const baseSubject = (() => {
           if (isDealAudit) {
             return deal?.title ?? changeLabel ?? displayEntityName;
@@ -326,7 +334,7 @@ const LatestActivities = () => {
         let description: React.ReactNode;
 
         switch (action) {
-          case "CREATE":
+          case 'CREATE':
             description = (
               <Space size={4}>
                 <Text strong>{actor}</Text>
@@ -341,7 +349,7 @@ const LatestActivities = () => {
               </Space>
             );
             break;
-          case "DELETE":
+          case 'DELETE':
             description = (
               <Space size={4}>
                 <Text strong>{actor}</Text>
@@ -350,7 +358,7 @@ const LatestActivities = () => {
               </Space>
             );
             break;
-          case "UPDATE":
+          case 'UPDATE':
             if (isDealAudit && stageChange) {
               description = (
                 <Space size={4}>
@@ -386,25 +394,21 @@ const LatestActivities = () => {
               <Space size={4}>
                 <Text strong>{actor}</Text>
                 <Text>performed</Text>
-                <Text strong>{action?.toLowerCase() ?? "an action"}</Text>
+                <Text strong>{action?.toLowerCase() ?? 'an action'}</Text>
               </Space>
             );
             break;
         }
 
         const timestamp = item.createdAt
-          ? dayjs(item.createdAt).format("MMM DD, YYYY - HH:mm")
-          : dayjs().format("MMM DD, YYYY - HH:mm");
+          ? dayjs(item.createdAt).format('MMM DD, YYYY - HH:mm')
+          : dayjs().format('MMM DD, YYYY - HH:mm');
 
         const avatarName = company?.name ?? deal?.title ?? baseSubject;
         const avatarUrl = company?.avatarUrl ?? item.user?.avatarUrl ?? undefined;
 
-        const avatarEntityType =
-          company?.id != null
-            ? "companies"
-            : item.user?.id != null
-              ? "users"
-              : undefined;
+        const avatarEntityType: AvatarResource | undefined =
+          company?.id != null ? 'companies' : item.user?.id != null ? 'users' : undefined;
 
         const avatarEntityId = company?.id ?? item.user?.id ?? undefined;
 
@@ -423,14 +427,14 @@ const LatestActivities = () => {
   const isLoading = isLoadingAudit;
 
   if (isAuditError) {
-    console.error("LatestActivities failed to load audits", {
+    console.error('LatestActivities failed to load audits', {
       auditsError,
     });
     return null;
   }
 
   if (isDealsError || stagesQueryResult.isError || isCompaniesError) {
-    console.warn("LatestActivities rendering with partial data", {
+    console.warn('LatestActivities rendering with partial data', {
       dealsError,
       stagesError: stagesQueryResult.error,
       companiesError,
@@ -439,13 +443,13 @@ const LatestActivities = () => {
   return (
     <Card
       styles={{
-        header: { padding: "16px" },
-        body: { padding: "0 1rem" },
+        header: { padding: '16px' },
+        body: { padding: '0 1rem' },
       }}
       title={
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <UnorderedListOutlined />
-          <Text size="sm" style={{ marginLeft: "0.5rem" }}>
+          <Text size="sm" style={{ marginLeft: '0.5rem' }}>
             Latest Activities
           </Text>
         </div>

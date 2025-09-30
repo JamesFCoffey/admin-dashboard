@@ -1,14 +1,8 @@
-import Icon from "@ant-design/icons";
-import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
+import Icon from '@ant-design/icons';
+import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 export const TextIconSvg = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
     <path
       d="M1.3125 2.25C1.26094 2.25 1.21875 2.29219 1.21875 2.34375V3C1.21875 3.05156 1.26094 3.09375 1.3125 3.09375H10.6875C10.7391 3.09375 10.7812 3.05156 10.7812 3V2.34375C10.7812 2.29219 10.7391 2.25 10.6875 2.25H1.3125Z"
       fill="black"

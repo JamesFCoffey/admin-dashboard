@@ -1,26 +1,22 @@
-import type { Metadata } from "next";
-import type { Viewport } from "next";
+import type { Metadata } from 'next';
+import type { Viewport } from 'next';
 
 export const viewport: Viewport = {
-  themeColor: "000000",
+  themeColor: '000000',
 };
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard",
-  description: "App includes dashboard, CRM, and Kanban board",
+  title: 'Admin Dashboard',
+  description: 'App includes dashboard, CRM, and Kanban board',
   openGraph: {
-    images: [{ url: "https://refine.dev/img/refine_social.png" }],
+    images: [{ url: 'https://refine.dev/img/refine_social.png' }],
   },
   twitter: {
-    images: ["https://refine.dev/img/refine_social.png"],
+    images: ['https://refine.dev/img/refine_social.png'],
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>

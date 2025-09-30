@@ -1,22 +1,22 @@
-import type { IGraphQLConfig } from "graphql-config";
+import type { IGraphQLConfig } from 'graphql-config';
 
 const config: IGraphQLConfig = {
   // define graphQL schema provided by Refine
-  schema: "https://api.crm.refine.dev/graphql",
+  schema: 'https://api.crm.refine.dev/graphql',
   extensions: {
     // codegen is a plugin that generates typescript types from GraphQL schema
     // https://the-guild.dev/graphql/codegen
     codegen: {
       // hooks are commands that are executed after a certain event
       hooks: {
-        afterOneFileWrite: ["eslint --fix", "prettier --write"],
+        afterOneFileWrite: ['eslint --fix', 'prettier --write'],
       },
       // generates typescript types from GraphQL schema
       generates: {
         // specify the output path of the generated types
-        "src/graphql/schema.types.ts": {
+        'src/graphql/schema.types.ts': {
           // use typescript plugin
-          plugins: ["typescript"],
+          plugins: ['typescript'],
           // set the config of the typescript plugin
           // this defines how the generated types will look like
           config: {
@@ -27,25 +27,25 @@ const config: IGraphQLConfig = {
             scalars: {
               // DateTime is a scalar type that is used to represent date and time
               DateTime: {
-                input: "string",
-                output: "string",
-                format: "date-time",
+                input: 'string',
+                output: 'string',
+                format: 'date-time',
               },
             },
           },
         },
         // generates typescript types from GraphQL operations
         // graphql operations are queries, mutations, and subscriptions we write in our code to communicate with the GraphQL API
-        "src/graphql/types.ts": {
+        'src/graphql/types.ts': {
           // preset is a plugin that is used to generate typescript types from GraphQL operations
           // import-types suggests to import types from schema.types.ts or other files
           // this is used to avoid duplication of types
           // https://the-guild.dev/graphql/codegen/plugins/presets/import-types-preset
-          preset: "import-types",
+          preset: 'import-types',
           // documents is used to define the path of the files that contain GraphQL operations
-          documents: ["src/**/*.{ts,tsx}"],
+          documents: ['src/**/*.{ts,tsx}'],
           // plugins is used to define the plugins that will be used to generate typescript types from GraphQL operations
-          plugins: ["typescript-operations"],
+          plugins: ['typescript-operations'],
           config: {
             skipTypename: true,
             enumsAsTypes: true,
@@ -58,7 +58,7 @@ const config: IGraphQLConfig = {
           },
           // presetConfig is used to define the config of the preset
           presetConfig: {
-            typesPath: "./schema.types",
+            typesPath: './schema.types',
           },
         },
       },

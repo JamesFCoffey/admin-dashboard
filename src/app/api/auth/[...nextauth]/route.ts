@@ -1,12 +1,12 @@
-import NextAuth from "next-auth";
-import type { Account, NextAuthOptions, Session, User } from "next-auth";
-import type { JWT } from "next-auth/jwt";
-import GitHub from "next-auth/providers/github";
-import Credentials from "next-auth/providers/credentials";
-import { randomBytes } from "node:crypto";
+import NextAuth from 'next-auth';
+import type { Account, NextAuthOptions, Session, User } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
+import GitHub from 'next-auth/providers/github';
+import Credentials from 'next-auth/providers/credentials';
+import { randomBytes } from 'node:crypto';
 
-import { logger } from "@/utilities/logger";
-import { appConfig } from "@/utilities/config";
+import { logger } from '@/utilities/logger';
+import { appConfig } from '@/utilities/config';
 
 const LOGIN_MUTATION = `
   mutation Login($email: String!) {
@@ -47,8 +47,8 @@ const ME_QUERY = `
 `;
 
 const buildJitWhitelist = () => {
-  const entries = (process.env.OAUTH_JIT_WHITELIST ?? "")
-    .split(",")
+  const entries = (process.env.OAUTH_JIT_WHITELIST ?? '')
+    .split(',')
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
 
@@ -56,7 +56,7 @@ const buildJitWhitelist = () => {
   const domains = new Set<string>();
 
   entries.forEach((entry) => {
-    if (entry.startsWith("@") && entry.length > 1) {
+    if (entry.startsWith('@') && entry.length > 1) {
       domains.add(entry.slice(1));
     } else {
       emails.add(entry);
@@ -72,7 +72,7 @@ const isWhitelistedForProvisioning = (email: string) => {
   const normalized = email.toLowerCase();
   if (jitEmails.has(normalized)) return true;
 
-  const domain = normalized.split("@")[1];
+  const domain = normalized.split('@')[1];
   if (!domain) return false;
 
   return jitDomains.has(domain);
@@ -80,16 +80,16 @@ const isWhitelistedForProvisioning = (email: string) => {
 
 const fetchAccessToken = async (email: string) => {
   const response = await fetch(appConfig.graphqlUrl, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Apollo-Require-Preflight": "true",
+      'Content-Type': 'application/json',
+      'Apollo-Require-Preflight': 'true',
     },
     body: JSON.stringify({
       query: LOGIN_MUTATION,
       variables: { email },
     }),
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -104,11 +104,11 @@ const fetchAccessToken = async (email: string) => {
   const accessToken = payload.data?.login?.accessToken;
 
   if (payload.errors?.length) {
-    throw new Error(payload.errors.map((error) => error.message).join("\n"));
+    throw new Error(payload.errors.map((error) => error.message).join('\n'));
   }
 
   if (!accessToken) {
-    throw new Error("Authentication service did not return an access token");
+    throw new Error('Authentication service did not return an access token');
   }
 
   return accessToken;
@@ -126,19 +126,19 @@ const registerUser = async (email: string): Promise<RegisterResult> => {
     );
   }
 
-  const password = randomBytes(12).toString("base64");
+  const password = randomBytes(12).toString('base64');
 
   const response = await fetch(appConfig.graphqlUrl, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Apollo-Require-Preflight": "true",
+      'Content-Type': 'application/json',
+      'Apollo-Require-Preflight': 'true',
     },
     body: JSON.stringify({
       query: REGISTER_MUTATION,
       variables: { email, password },
     }),
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -151,18 +151,16 @@ const registerUser = async (email: string): Promise<RegisterResult> => {
   };
 
   if (payload.errors?.length) {
-    throw new Error(payload.errors.map((error) => error.message).join("\n"));
+    throw new Error(payload.errors.map((error) => error.message).join('\n'));
   }
 
   const registeredUser = payload.data?.register;
 
   if (!registeredUser?.email || !registeredUser?.id) {
-    throw new Error("CRM did not return a registered user record.");
+    throw new Error('CRM did not return a registered user record.');
   }
 
-  logger.info(
-    `Provisioned CRM user ${registeredUser.email} via OAuth just-in-time registration.`,
-  );
+  logger.info(`Provisioned CRM user ${registeredUser.email} via OAuth just-in-time registration.`);
 
   return registeredUser;
 };
@@ -176,10 +174,10 @@ const updateUserProfile = async (
 
   try {
     await fetch(appConfig.graphqlUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Apollo-Require-Preflight": "true",
+        'Content-Type': 'application/json',
+        'Apollo-Require-Preflight': 'true',
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
@@ -189,26 +187,23 @@ const updateUserProfile = async (
           name: profile.name,
         },
       }),
-      cache: "no-store",
+      cache: 'no-store',
     });
   } catch (error) {
-    logger.warn(
-      `Failed to update CRM profile for ${userId}. User will keep default name.`,
-      error,
-    );
+    logger.warn(`Failed to update CRM profile for ${userId}. User will keep default name.`, error);
   }
 };
 
 const fetchCurrentUser = async (accessToken: string) => {
   const response = await fetch(appConfig.graphqlUrl, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Apollo-Require-Preflight": "true",
+      'Content-Type': 'application/json',
+      'Apollo-Require-Preflight': 'true',
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({ query: ME_QUERY }),
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -221,29 +216,26 @@ const fetchCurrentUser = async (accessToken: string) => {
   };
 
   if (payload.errors?.length) {
-    throw new Error(payload.errors.map((error) => error.message).join("\n"));
+    throw new Error(payload.errors.map((error) => error.message).join('\n'));
   }
 
   return payload.data?.me ?? null;
 };
 
-const ensureUserProfile = async (
-  accessToken: string,
-  profile: { name?: string },
-) => {
+const ensureUserProfile = async (accessToken: string, profile: { name?: string }) => {
   if (!profile?.name) return;
 
   try {
     const currentUser = await fetchCurrentUser(accessToken);
     if (!currentUser?.id) return;
 
-    if ((currentUser.name ?? "").trim() === profile.name.trim()) {
+    if ((currentUser.name ?? '').trim() === profile.name.trim()) {
       return;
     }
 
     await updateUserProfile(currentUser.id, accessToken, profile);
   } catch (error) {
-    logger.warn("Failed to synchronize CRM profile name after login", error);
+    logger.warn('Failed to synchronize CRM profile name after login', error);
   }
 };
 
@@ -270,7 +262,7 @@ const exchangeAccessToken = async (email: string, profile?: { name?: string }) =
   }
 };
 
-const providers: NextAuthOptions["providers"] = [];
+const providers: NextAuthOptions['providers'] = [];
 
 if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   providers.push(
@@ -290,22 +282,22 @@ if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   );
 } else {
   logger.warn(
-    "GitHub OAuth credentials missing. Set GITHUB_ID and GITHUB_SECRET to enable GitHub login.",
+    'GitHub OAuth credentials missing. Set GITHUB_ID and GITHUB_SECRET to enable GitHub login.',
   );
 }
 
 providers.push(
   Credentials({
-    id: "credentials",
-    name: "Demo Credentials",
+    id: 'credentials',
+    name: 'Demo Credentials',
     credentials: {
-      email: { label: "Email", type: "email", placeholder: "name@example.com" },
+      email: { label: 'Email', type: 'email', placeholder: 'name@example.com' },
     },
     async authorize(credentials) {
       const email = credentials?.email?.toString().trim();
 
       if (!email) {
-        throw new Error("Email is required");
+        throw new Error('Email is required');
       }
 
       const { token, emailUsed } = await exchangeAccessToken(email);
@@ -321,20 +313,18 @@ providers.push(
 );
 
 if (providers.length === 0) {
-  throw new Error(
-    "At least one authentication provider must be configured for NextAuth.",
-  );
+  throw new Error('At least one authentication provider must be configured for NextAuth.');
 }
 
 const authConfig: NextAuthOptions = {
   providers,
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 60 * 60 * 24 * 30, // 30 days
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: '/login',
+    error: '/login',
   },
   callbacks: {
     async jwt({
@@ -359,20 +349,17 @@ const authConfig: NextAuthOptions = {
         if (maybeToken) {
           token.apiAccessToken = maybeToken;
           if (maybeCrmEmail) {
-            (token as typeof token & { apiAccessEmail?: string }).apiAccessEmail =
-              maybeCrmEmail;
+            (token as typeof token & { apiAccessEmail?: string }).apiAccessEmail = maybeCrmEmail;
           }
         } else if (user.email && (!token.apiAccessToken || account)) {
           try {
-            const { token: apiToken, emailUsed } = await exchangeAccessToken(
-              user.email,
-              { name: user.name ?? undefined },
-            );
+            const { token: apiToken, emailUsed } = await exchangeAccessToken(user.email, {
+              name: user.name ?? undefined,
+            });
             token.apiAccessToken = apiToken;
-            (token as typeof token & { apiAccessEmail?: string }).apiAccessEmail =
-              emailUsed;
+            (token as typeof token & { apiAccessEmail?: string }).apiAccessEmail = emailUsed;
           } catch (error) {
-            logger.error("Failed to exchange OAuth profile for API access", error);
+            logger.error('Failed to exchange OAuth profile for API access', error);
             throw error;
           }
         }
@@ -380,13 +367,7 @@ const authConfig: NextAuthOptions = {
 
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: JWT;
-    }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         const sessionUser = session.user as typeof session.user & {
           id?: string;
@@ -401,22 +382,20 @@ const authConfig: NextAuthOptions = {
           sessionUser.accessToken = token.apiAccessToken as string;
         }
 
-        const accessEmail = (token as typeof token & { apiAccessEmail?: string })
-          .apiAccessEmail;
+        const accessEmail = (token as typeof token & { apiAccessEmail?: string }).apiAccessEmail;
 
         if (accessEmail) {
           sessionUser.crmEmail = accessEmail;
         }
 
-        const profileName = (token as typeof token & { profileName?: string })
-          .profileName;
+        const profileName = (token as typeof token & { profileName?: string }).profileName;
         if (profileName && !sessionUser.name) {
           sessionUser.name = profileName;
         }
       }
 
       logger.debug(
-        "session callback resolved",
+        'session callback resolved',
         JSON.stringify({ hasUser: !!session.user, accessEmail: (token as any).apiAccessEmail }),
       );
 
@@ -426,14 +405,14 @@ const authConfig: NextAuthOptions = {
   cookies: {
     sessionToken: {
       name:
-        process.env.NODE_ENV === "production"
-          ? "__Secure-next-auth.session-token"
-          : "next-auth.session-token",
+        process.env.NODE_ENV === 'production'
+          ? '__Secure-next-auth.session-token'
+          : 'next-auth.session-token',
       options: {
         httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
       },
     },
   },

@@ -1,24 +1,24 @@
-import { MarkdownField } from "@refinedev/antd";
+import { MarkdownField } from '@refinedev/antd';
 
-import { Typography, Space, Tag } from "antd";
+import { Typography, Space, Tag } from 'antd';
 
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
-import { Text, UserTag } from "@/components";
-import { getDateColor } from "@/utilities";
+import { Text, UserTag } from '@/components';
+import { getDateColor } from '@/utilities';
 
-import { Task } from "@/graphql/schema.types";
+import { Task } from '@/graphql/schema.types';
 
 type DescriptionProps = {
-  description?: Task["description"];
+  description?: Task['description'];
 };
 
 type DueDateProps = {
-  dueData?: Task["dueDate"];
+  dueData?: Task['dueDate'];
 };
 
 type UserProps = {
-  users?: Task["users"];
+  users?: Task['users'];
 };
 
 // display a task's descriptio if it exists, otherwise display a link to add one
@@ -41,27 +41,27 @@ export const DueDateHeader = ({ dueData }: DueDateProps) => {
     // get the color of the due date
     const color = getDateColor({
       date: dueData,
-      defaultColor: "processing",
+      defaultColor: 'processing',
     });
 
     // depending on the due date, display a different color and text
     const getTagText = () => {
       switch (color) {
-        case "error":
-          return "Overdue";
+        case 'error':
+          return 'Overdue';
 
-        case "warning":
-          return "Due soon";
+        case 'warning':
+          return 'Due soon';
 
         default:
-          return "Processing";
+          return 'Processing';
       }
     };
 
     return (
       <Space size={[0, 8]}>
         <Tag color={color}>{getTagText()}</Tag>
-        <Text>{dayjs(dueData).format("MMMM D, YYYY - h:ma")}</Text>
+        <Text>{dayjs(dueData).format('MMMM D, YYYY - h:ma')}</Text>
       </Space>
     );
   }

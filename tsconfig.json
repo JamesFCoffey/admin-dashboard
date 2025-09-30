@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ESNext", // Good
     "useDefineForClassFields": true, // Good
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ], // Good
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Good
     "allowJs": true, // Good
     "skipLibCheck": true, // Good
     "esModuleInterop": true, // Good
@@ -20,11 +16,10 @@
     "isolatedModules": true, // Good
     "noEmit": true, // Good
     "jsx": "preserve", // Good
+    "types": ["jest", "node"],
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     "plugins": [
       {
@@ -39,13 +34,12 @@
   },
   "include": [
     "./src",
+    "./tests",
     "./dist/types/**/*.ts",
     "./next-env.d.ts",
     ".next/types/**/*.ts",
     ".next-3000/types/**/*.ts",
     ".next-3001/types/**/*.ts"
   ], // Good
-  "exclude": [
-    "./node_modules"
-  ] // Good
+  "exclude": ["./node_modules"] // Good
 }

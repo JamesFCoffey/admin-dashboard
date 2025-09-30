@@ -1,19 +1,19 @@
-import type { AuthProvider } from "@refinedev/core";
-import { getSession, signIn, signOut } from "next-auth/react";
+import type { AuthProvider } from '@refinedev/core';
+import { getSession, signIn, signOut } from 'next-auth/react';
 
-import { API_URL, dataProvider } from "./data";
+import { API_URL, dataProvider } from './data';
 
-export const demoAuthEmail = "michael.scott@dundermifflin.com";
+export const demoAuthEmail = 'michael.scott@dundermifflin.com';
 
 export const authProvider: AuthProvider = {
   login: async ({ email, providerName, redirectTo }) => {
-    const provider = providerName ?? (email ? "credentials" : "github");
+    const provider = providerName ?? (email ? 'credentials' : 'github');
 
-    if (provider === "credentials") {
-      const result = await signIn("credentials", {
+    if (provider === 'credentials') {
+      const result = await signIn('credentials', {
         redirect: false,
         email,
-        callbackUrl: redirectTo ?? "/",
+        callbackUrl: redirectTo ?? '/',
       });
 
       if (result?.error) {
@@ -21,19 +21,19 @@ export const authProvider: AuthProvider = {
           success: false,
           error: {
             message: result.error,
-            name: "LoginError",
+            name: 'LoginError',
           },
         };
       }
 
       return {
         success: true,
-        redirectTo: redirectTo ?? "/",
+        redirectTo: redirectTo ?? '/',
       };
     }
 
     await signIn(provider, {
-      callbackUrl: redirectTo ?? "/",
+      callbackUrl: redirectTo ?? '/',
     });
 
     return {
@@ -41,16 +41,16 @@ export const authProvider: AuthProvider = {
     };
   },
   logout: async () => {
-    await signOut({ redirect: false, callbackUrl: "/login" });
+    await signOut({ redirect: false, callbackUrl: '/login' });
 
     return {
       success: true,
-      redirectTo: "/login",
+      redirectTo: '/login',
     };
   },
   onError: async (error) => {
-    if (error.statusCode === "UNAUTHENTICATED") {
-      await signOut({ redirect: false, callbackUrl: "/login" });
+    if (error.statusCode === 'UNAUTHENTICATED') {
+      await signOut({ redirect: false, callbackUrl: '/login' });
 
       return {
         logout: true,
@@ -62,8 +62,8 @@ export const authProvider: AuthProvider = {
   check: async () => {
     const session = await getSession();
 
-    if (process.env.NODE_ENV === "development") {
-      console.debug("authProvider.check session", session);
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('authProvider.check session', session);
     }
 
     if (session?.user) {
@@ -74,14 +74,14 @@ export const authProvider: AuthProvider = {
 
     return {
       authenticated: false,
-      redirectTo: "/login",
+      redirectTo: '/login',
     };
   },
   getIdentity: async () => {
     try {
       const { data } = await dataProvider.custom<{ me: any }>({
         url: API_URL,
-        method: "post",
+        method: 'post',
         headers: {},
         meta: {
           rawQuery: `

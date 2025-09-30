@@ -1,21 +1,18 @@
-import { useForm } from "@refinedev/antd";
-import { HttpError } from "@refinedev/core";
-import { GetFields, GetVariables } from "@refinedev/nestjs-query";
+import { useForm } from '@refinedev/antd';
+import { HttpError } from '@refinedev/core';
+import { GetFields, GetVariables } from '@refinedev/nestjs-query';
 
-import { Button, DatePicker, Form, Space } from "antd";
-import dayjs from "dayjs";
+import { Button, DatePicker, Form, Space } from 'antd';
+import dayjs from 'dayjs';
 
-import { Task } from "@/graphql/schema.types";
-import {
-  UpdateTaskMutation,
-  UpdateTaskMutationVariables,
-} from "@/graphql/types";
+import { Task } from '@/graphql/schema.types';
+import { UpdateTaskMutation, UpdateTaskMutationVariables } from '@/graphql/types';
 
-import { UPDATE_TASK_MUTATION } from "@/graphql/mutations";
+import { UPDATE_TASK_MUTATION } from '@/graphql/mutations';
 
 type Props = {
   initialValues: {
-    dueDate?: Task["dueDate"];
+    dueDate?: Task['dueDate'];
   };
   cancelForm: () => void;
 };
@@ -35,7 +32,7 @@ export const DueDateForm = ({ initialValues, cancelForm }: Props) => {
      * Type -> the type from which we want to pick the properties
      * Keys -> the properties that we want to pick
      */
-    Pick<GetVariables<UpdateTaskMutationVariables>, "dueDate">
+    Pick<GetVariables<UpdateTaskMutationVariables>, 'dueDate'>
   >({
     queryOptions: {
       // disable the query to prevent fetching data on component mount
@@ -55,9 +52,9 @@ export const DueDateForm = ({ initialValues, cancelForm }: Props) => {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
       <Form {...formProps} initialValues={initialValues}>
@@ -73,9 +70,9 @@ export const DueDateForm = ({ initialValues, cancelForm }: Props) => {
             format="YYYY-MM-DD HH:mm"
             showTime={{
               showSecond: false,
-              format: "HH:mm",
+              format: 'HH:mm',
             }}
-            style={{ backgroundColor: "#fff" }}
+            style={{ backgroundColor: '#fff' }}
           />
         </Form.Item>
       </Form>

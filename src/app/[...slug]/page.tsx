@@ -1,6 +1,6 @@
-import { ClientOnly } from "../client";
+import { ClientOnly } from '../client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function CatchAllPage() {
   return <ClientOnly />;

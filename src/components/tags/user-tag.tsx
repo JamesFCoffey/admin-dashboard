@@ -1,7 +1,7 @@
-import { Space, Tag } from "antd";
+import { Space, Tag } from 'antd';
 
-import { User } from "@/graphql/schema.types";
-import CustomAvatar from "../custom-avatar";
+import { User } from '@/graphql/schema.types';
+import CustomAvatar from '../custom-avatar';
 
 type Props = {
   user: User;
@@ -16,8 +16,8 @@ export const UserTag = ({ user }: Props) => {
         padding: 2,
         paddingRight: 8,
         borderRadius: 24,
-        lineHeight: "unset",
-        marginRight: "unset",
+        lineHeight: 'unset',
+        marginRight: 'unset',
       }}
     >
       <Space size={4}>
@@ -26,7 +26,7 @@ export const UserTag = ({ user }: Props) => {
           name={user.name}
           entityType="users"
           entityId={user.id}
-          style={{ display: "inline-flex" }}
+          style={{ display: 'inline-flex' }}
         />
         {user.name}
       </Space>

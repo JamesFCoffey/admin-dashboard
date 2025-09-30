@@ -1,21 +1,13 @@
-import { useForm, useSelect } from "@refinedev/antd";
-import { HttpError } from "@refinedev/core";
-import {
-  GetFields,
-  GetFieldsFromList,
-  GetVariables,
-} from "@refinedev/nestjs-query";
+import { useForm, useSelect } from '@refinedev/antd';
+import { HttpError } from '@refinedev/core';
+import { GetFields, GetFieldsFromList, GetVariables } from '@refinedev/nestjs-query';
 
-import { Button, Form, Select, Space } from "antd";
+import { Button, Form, Select, Space } from 'antd';
 
-import {
-  UpdateTaskMutation,
-  UpdateTaskMutationVariables,
-  UsersSelectQuery,
-} from "@/graphql/types";
+import { UpdateTaskMutation, UpdateTaskMutationVariables, UsersSelectQuery } from '@/graphql/types';
 
-import { USERS_SELECT_QUERY } from "@/graphql/queries";
-import { UPDATE_TASK_MUTATION } from "@/graphql/mutations";
+import { USERS_SELECT_QUERY } from '@/graphql/queries';
+import { UPDATE_TASK_MUTATION } from '@/graphql/mutations';
 
 type Props = {
   initialValues: {
@@ -37,7 +29,7 @@ export const UsersForm = ({ initialValues, cancelForm }: Props) => {
      * Type -> the type from which we want to pick the properties
      * Keys -> the properties that we want to pick
      */
-    Pick<GetVariables<UpdateTaskMutationVariables>, "userIds">
+    Pick<GetVariables<UpdateTaskMutationVariables>, 'userIds'>
   >({
     queryOptions: {
       // disable the query to prevent fetching data on component mount
@@ -57,35 +49,31 @@ export const UsersForm = ({ initialValues, cancelForm }: Props) => {
   // use the useSelect hook to fetch the list of users from the server and display them in a select component
   const { selectProps } = useSelect<GetFieldsFromList<UsersSelectQuery>>({
     // specify the resource from which we want to fetch the data
-    resource: "users",
+    resource: 'users',
     // specify the query that should be performed
     meta: {
       gqlQuery: USERS_SELECT_QUERY,
     },
     // specify the label for the select component
-    optionLabel: "name",
+    optionLabel: 'name',
   });
 
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "end",
-        justifyContent: "space-between",
-        gap: "12px",
+        display: 'flex',
+        alignItems: 'end',
+        justifyContent: 'space-between',
+        gap: '12px',
       }}
     >
-      <Form
-        {...formProps}
-        style={{ width: "100%" }}
-        initialValues={initialValues}
-      >
+      <Form {...formProps} style={{ width: '100%' }} initialValues={initialValues}>
         <Form.Item noStyle name="userIds">
           <Select
             {...selectProps}
             className="kanban-users-form-select"
-            dropdownStyle={{ padding: "0px" }}
-            style={{ width: "100%" }}
+            dropdownStyle={{ padding: '0px' }}
+            style={{ width: '100%' }}
             mode="multiple"
           />
         </Form.Item>

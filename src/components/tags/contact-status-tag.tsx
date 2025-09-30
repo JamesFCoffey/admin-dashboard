@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 
 import {
   CheckCircleOutlined,
   MinusCircleOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
-} from "@ant-design/icons";
-import { Tag, TagProps } from "antd";
+} from '@ant-design/icons';
+import { Tag, TagProps } from 'antd';
 
-import { ContactStatus } from "@/graphql/schema.types";
+import { ContactStatus } from '@/graphql/schema.types';
 
 type Props = {
   status: ContactStatus;
@@ -20,40 +20,40 @@ type Props = {
  */
 export const ContactStatusTag = ({ status }: Props) => {
   let icon: React.ReactNode = null;
-  let color: TagProps["color"] = undefined;
+  let color: TagProps['color'] = undefined;
 
   switch (status) {
-    case "NEW":
-    case "CONTACTED":
-    case "INTERESTED":
+    case 'NEW':
+    case 'CONTACTED':
+    case 'INTERESTED':
       icon = <PlayCircleOutlined />;
-      color = "cyan";
+      color = 'cyan';
       break;
 
-    case "UNQUALIFIED":
+    case 'UNQUALIFIED':
       icon = <PlayCircleOutlined />;
-      color = "red";
+      color = 'red';
       break;
 
-    case "QUALIFIED":
-    case "NEGOTIATION":
+    case 'QUALIFIED':
+    case 'NEGOTIATION':
       icon = <PlayCircleFilled />;
-      color = "green";
+      color = 'green';
       break;
 
-    case "LOST":
+    case 'LOST':
       icon = <PlayCircleFilled />;
-      color = "red";
+      color = 'red';
       break;
 
-    case "WON":
+    case 'WON':
       icon = <CheckCircleOutlined />;
-      color = "green";
+      color = 'green';
       break;
 
-    case "CHURNED":
+    case 'CHURNED':
       icon = <MinusCircleOutlined />;
-      color = "red";
+      color = 'red';
       break;
 
     default:
@@ -61,7 +61,7 @@ export const ContactStatusTag = ({ status }: Props) => {
   }
 
   return (
-    <Tag color={color} style={{ textTransform: "capitalize" }}>
+    <Tag color={color} style={{ textTransform: 'capitalize' }}>
       {icon} {status.toLowerCase()}
     </Tag>
   );

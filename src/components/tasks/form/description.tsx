@@ -1,21 +1,18 @@
-import { useForm } from "@refinedev/antd";
-import { HttpError } from "@refinedev/core";
-import { GetFields, GetVariables } from "@refinedev/nestjs-query";
+import { useForm } from '@refinedev/antd';
+import { HttpError } from '@refinedev/core';
+import { GetFields, GetVariables } from '@refinedev/nestjs-query';
 
-import MDEditor from "@uiw/react-md-editor";
-import { Button, Form, Space } from "antd";
+import MDEditor from '@uiw/react-md-editor';
+import { Button, Form, Space } from 'antd';
 
-import { Task } from "@/graphql/schema.types";
-import {
-  UpdateTaskMutation,
-  UpdateTaskMutationVariables,
-} from "@/graphql/types";
+import { Task } from '@/graphql/schema.types';
+import { UpdateTaskMutation, UpdateTaskMutationVariables } from '@/graphql/types';
 
-import { UPDATE_TASK_MUTATION } from "@/graphql/mutations";
+import { UPDATE_TASK_MUTATION } from '@/graphql/mutations';
 
 type Props = {
   initialValues: {
-    description?: Task["description"];
+    description?: Task['description'];
   };
   cancelForm: () => void;
 };
@@ -35,7 +32,7 @@ export const DescriptionForm = ({ initialValues, cancelForm }: Props) => {
      * Type -> the type from which we want to pick the properties
      * Keys -> the properties that we want to pick
      */
-    Pick<GetVariables<UpdateTaskMutationVariables>, "description">
+    Pick<GetVariables<UpdateTaskMutationVariables>, 'description'>
   >({
     queryOptions: {
       // we are disabling the query because we don't want to fetch the data on component mount.
@@ -61,10 +58,10 @@ export const DescriptionForm = ({ initialValues, cancelForm }: Props) => {
       </Form>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "end",
-          marginTop: "12px",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'end',
+          marginTop: '12px',
         }}
       >
         <Space>

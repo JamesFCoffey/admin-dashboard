@@ -1,8 +1,8 @@
-import React from "react";
-import { getNameInitials } from "@/utilities";
-import { Avatar as AntdAvatar, AvatarProps } from "antd";
+import React from 'react';
+import { getNameInitials } from '@/utilities';
+import { Avatar as AntdAvatar, AvatarProps } from 'antd';
 
-import { AvatarResource, useCustomAvatar } from "@/utilities/custom-avatar-store";
+import { AvatarResource, useCustomAvatar } from '@/utilities/custom-avatar-store';
 
 type Props = AvatarProps & {
   name?: string;
@@ -23,20 +23,20 @@ const CustomAvatar = ({
   const overrideSrc = useCustomAvatar(entityType, entityId);
 
   const effectiveSrc = preferProvidedSource
-    ? (src as string | undefined) ?? overrideSrc
-    : overrideSrc ?? (src as string | undefined);
+    ? ((src as string | undefined) ?? overrideSrc)
+    : (overrideSrc ?? (src as string | undefined));
 
-  const initials = getNameInitials(name || "");
+  const initials = getNameInitials(name || '');
 
   return (
     <AntdAvatar
       alt={name}
       size="small"
       style={{
-        backgroundColor: "#87d068",
-        display: "flex",
-        alignItems: "center",
-        border: "none",
+        backgroundColor: '#87d068',
+        display: 'flex',
+        alignItems: 'center',
+        border: 'none',
         ...style,
       }}
       src={effectiveSrc}

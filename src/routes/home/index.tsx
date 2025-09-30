@@ -3,9 +3,9 @@ import {
   DealsChart,
   LatestActivities,
   UpcomingEvents,
-} from "@/components";
-import { useDashboardTotals } from "@/utilities/hooks";
-import { Alert, Col, Empty, Row } from "antd";
+} from '@/components';
+import { useDashboardTotals } from '@/utilities/hooks';
+import { Alert, Col, Empty, Row } from 'antd';
 
 export const Home = () => {
   const { totals, isLoading, isError, error, isEmpty } = useDashboardTotals();
@@ -18,13 +18,13 @@ export const Home = () => {
               type="error"
               showIcon
               message="Failed to load dashboard totals"
-              description={error?.message || "Please try again."}
+              description={error?.message || 'Please try again.'}
             />
           </Col>
         </Row>
       )}
       {isEmpty && !isError && (
-        <Row gutter={[32, 32]} style={{ marginBottom: "32px" }}>
+        <Row gutter={[32, 32]} style={{ marginBottom: '32px' }}>
           <Col xs={24}>
             <Empty description="No summary metrics available yet." />
           </Col>
@@ -53,15 +53,15 @@ export const Home = () => {
           />
         </Col>
       </Row>
-      <Row gutter={[32, 32]} style={{ marginTop: "32px" }}>
-        <Col xs={24} sm={24} xl={8} style={{ height: "460px" }}>
+      <Row gutter={[32, 32]} style={{ marginTop: '32px' }}>
+        <Col xs={24} sm={24} xl={8} style={{ height: '460px' }}>
           <UpcomingEvents />
         </Col>
-        <Col xs={24} sm={24} xl={16} style={{ height: "460px" }}>
+        <Col xs={24} sm={24} xl={16} style={{ height: '460px' }}>
           <DealsChart />
         </Col>
       </Row>
-      <Row gutter={[32, 32]} style={{ marginTop: "32px" }}>
+      <Row gutter={[32, 32]} style={{ marginTop: '32px' }}>
         <Col xs={24}>
           <LatestActivities />
         </Col>

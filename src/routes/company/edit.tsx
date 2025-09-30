@@ -1,28 +1,24 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
-import { Button, Col, Form, Input, Row, Select, Space, Upload } from "antd";
-import { Edit, useForm, useSelect } from "@refinedev/antd";
-import { UPDATE_COMPANY_MUTATION } from "@/graphql/mutations";
-import CustomAvatar from "@/components/custom-avatar";
-import { getNameInitials } from "@/utilities";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
-import { UsersSelectQuery } from "@/graphql/types";
-import { USERS_SELECT_QUERY } from "@/graphql/queries";
-import SelectOptionWithAvatar from "@/components/select-option-with-avatar";
-import {
-  businessTypeOptions,
-  companySizeOptions,
-  industryOptions,
-} from "@/constants";
-import { CompanyContactsTable } from "./contacts-table";
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
-import type { RcFile } from "antd/es/upload/interface";
+import { Button, Col, Form, Input, Row, Select, Space, Upload } from 'antd';
+import { Edit, useForm, useSelect } from '@refinedev/antd';
+import { UPDATE_COMPANY_MUTATION } from '@/graphql/mutations';
+import CustomAvatar from '@/components/custom-avatar';
+import { getNameInitials } from '@/utilities';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
+import { UsersSelectQuery } from '@/graphql/types';
+import { USERS_SELECT_QUERY } from '@/graphql/queries';
+import SelectOptionWithAvatar from '@/components/select-option-with-avatar';
+import { businessTypeOptions, companySizeOptions, industryOptions } from '@/constants';
+import { CompanyContactsTable } from './contacts-table';
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import type { RcFile } from 'antd/es/upload/interface';
 import {
   customAvatarStore,
   readFileAsDataUrl,
   useCustomAvatar,
-} from "@/utilities/custom-avatar-store";
-import { Text } from "@/components/text";
+} from '@/utilities/custom-avatar-store';
+import { Text } from '@/components/text';
 
 const EditPage = () => {
   const { saveButtonProps, formProps, formLoading, queryResult } = useForm({
@@ -34,14 +30,12 @@ const EditPage = () => {
 
   const companyRecord = queryResult?.data?.data;
   const companyId = companyRecord?.id;
-  const companyName = companyRecord?.name ?? "";
+  const companyName = companyRecord?.name ?? '';
   const serverAvatar = companyRecord?.avatarUrl ?? undefined;
 
-  const customLogo = useCustomAvatar("companies", companyId);
+  const customLogo = useCustomAvatar('companies', companyId);
 
-  const [pendingLogo, setPendingLogo] = useState<string | null | undefined>(
-    undefined,
-  );
+  const [pendingLogo, setPendingLogo] = useState<string | null | undefined>(undefined);
   const [isLogoUploading, setIsLogoUploading] = useState(false);
 
   const displayLogo = useMemo(() => {
@@ -58,7 +52,7 @@ const EditPage = () => {
       const dataUrl = await readFileAsDataUrl(file);
       setPendingLogo(dataUrl);
     } catch (error) {
-      console.error("Failed to process company logo", error);
+      console.error('Failed to process company logo', error);
     } finally {
       setIsLogoUploading(false);
     }
@@ -80,27 +74,29 @@ const EditPage = () => {
   const handleFinish: typeof originalOnFinish = async (values) => {
     const result = await originalOnFinish?.(values);
 
-    if (result !== false && companyId) {
-      if (pendingLogo !== undefined) {
-        if (pendingLogo) {
-          customAvatarStore.setAvatar("companies", companyId, pendingLogo);
-        } else {
-          customAvatarStore.clearAvatar("companies", companyId);
-        }
-      }
-
-      setPendingLogo(undefined);
+    if ((result as boolean | undefined) === false || !companyId) {
+      return result;
     }
+
+    if (pendingLogo !== undefined) {
+      if (pendingLogo) {
+        customAvatarStore.setAvatar('companies', companyId, pendingLogo);
+      } else {
+        customAvatarStore.clearAvatar('companies', companyId);
+      }
+    }
+
+    setPendingLogo(undefined);
 
     return result;
   };
   const { selectProps, queryResult: queryResultUsers } = useSelect<
     GetFieldsFromList<UsersSelectQuery>
   >({
-    resource: "users",
-    optionLabel: "name",
+    resource: 'users',
+    optionLabel: 'name',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: USERS_SELECT_QUERY,
@@ -110,13 +106,9 @@ const EditPage = () => {
     <div>
       <Row gutter={[32, 32]}>
         <Col xs={24} xl={12}>
-          <Edit
-            isLoading={formLoading}
-            saveButtonProps={saveButtonProps}
-            breadcrumb={false}
-          >
+          <Edit isLoading={formLoading} saveButtonProps={saveButtonProps} breadcrumb={false}>
             <Form {...restFormProps} layout="vertical" onFinish={handleFinish}>
-              <Space direction="vertical" size={12} style={{ marginBottom: "24px" }}>
+              <Space direction="vertical" size={12} style={{ marginBottom: '24px' }}>
                 <CustomAvatar
                   shape="square"
                   src={displayLogo}
@@ -177,22 +169,14 @@ const EditPage = () => {
                 name="companySize"
                 initialValue={formProps?.initialValues?.companySize}
               >
-                <Select
-                  placeholder="Select company size"
-                  options={companySizeOptions}
-                  allowClear
-                />
+                <Select placeholder="Select company size" options={companySizeOptions} allowClear />
               </Form.Item>
               <Form.Item
                 label="Industry"
                 name="industry"
                 initialValue={formProps?.initialValues?.industry}
               >
-                <Select
-                  placeholder="Select industry"
-                  options={industryOptions}
-                  allowClear
-                />
+                <Select placeholder="Select industry" options={industryOptions} allowClear />
               </Form.Item>
               <Form.Item
                 label="Business type"

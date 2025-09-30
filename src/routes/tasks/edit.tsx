@@ -1,14 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { DeleteButton, useModalForm } from "@refinedev/antd";
-import { useNavigation } from "@refinedev/core";
+import { DeleteButton, useModalForm } from '@refinedev/antd';
+import { useNavigation } from '@refinedev/core';
 
-import {
-  AlignLeftOutlined,
-  FieldTimeOutlined,
-  UsergroupAddOutlined,
-} from "@ant-design/icons";
-import { Modal } from "antd";
+import { AlignLeftOutlined, FieldTimeOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
 
 import {
   Accordion,
@@ -20,10 +16,10 @@ import {
   TitleForm,
   UsersForm,
   UsersHeader,
-} from "@/components";
-import { Task } from "@/graphql/schema.types";
+} from '@/components';
+import { Task } from '@/graphql/schema.types';
 
-import { UPDATE_TASK_MUTATION } from "@/graphql/mutations";
+import { UPDATE_TASK_MUTATION } from '@/graphql/mutations';
 
 const TasksEditPage = () => {
   const [activeKey, setActiveKey] = useState<string | undefined>();
@@ -37,7 +33,7 @@ const TasksEditPage = () => {
   // queryResult -> It's an instance of useQuery from react-query
   const { modalProps, close, queryResult } = useModalForm<Task>({
     // specify the action to perform i.e., create or edit
-    action: "edit",
+    action: 'edit',
     // specify whether the modal should be visible by default
     defaultVisible: true,
     // specify the gql mutation to be performed
@@ -57,7 +53,7 @@ const TasksEditPage = () => {
       className="kanban-update-modal"
       onCancel={() => {
         close();
-        list("tasks", "replace");
+        list('tasks', 'replace');
       }}
       title={<TitleForm initialValues={{ title }} isLoading={isLoading} />}
       width={586}
@@ -65,7 +61,7 @@ const TasksEditPage = () => {
         <DeleteButton
           type="link"
           onSuccess={() => {
-            list("tasks", "replace");
+            list('tasks', 'replace');
           }}
         >
           Delete card

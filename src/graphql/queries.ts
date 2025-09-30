@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 // Query to get Total Company, Contact and Deal Counts
 export const DASHBOARD_TOTAL_COUNTS_QUERY = gql`
@@ -123,11 +123,7 @@ export const DASHBOARD_LATEST_ACTIVITIES_AUDITS_QUERY = gql`
 
 // Query to get companies list
 export const COMPANIES_LIST_QUERY = gql`
-  query CompaniesList(
-    $filter: CompanyFilter!
-    $sorting: [CompanySort!]
-    $paging: OffsetPaging!
-  ) {
+  query CompaniesList($filter: CompanyFilter!, $sorting: [CompanySort!], $paging: OffsetPaging!) {
     companies(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount
       nodes {
@@ -147,11 +143,7 @@ export const COMPANIES_LIST_QUERY = gql`
 
 // Query to get users list
 export const USERS_SELECT_QUERY = gql`
-  query UsersSelect(
-    $filter: UserFilter!
-    $sorting: [UserSort!]
-    $paging: OffsetPaging!
-  ) {
+  query UsersSelect($filter: UserFilter!, $sorting: [UserSort!], $paging: OffsetPaging!) {
     # Get all users
     users(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount # Get the total count of users
@@ -166,11 +158,7 @@ export const USERS_SELECT_QUERY = gql`
 `;
 
 export const COMPANIES_SELECT_QUERY = gql`
-  query CompaniesSelect(
-    $filter: CompanyFilter!
-    $sorting: [CompanySort!]
-    $paging: OffsetPaging!
-  ) {
+  query CompaniesSelect($filter: CompanyFilter!, $sorting: [CompanySort!], $paging: OffsetPaging!) {
     companies(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount
       nodes {
@@ -211,11 +199,7 @@ export const COMPANY_CONTACTS_TABLE_QUERY = gql`
 `;
 
 export const DEALS_LIST_QUERY = gql`
-  query DealsList(
-    $filter: DealFilter!
-    $sorting: [DealSort!]
-    $paging: OffsetPaging!
-  ) {
+  query DealsList($filter: DealFilter!, $sorting: [DealSort!], $paging: OffsetPaging!) {
     deals(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount
       nodes {
@@ -244,11 +228,7 @@ export const DEALS_LIST_QUERY = gql`
 
 // Query to get task stages list
 export const TASK_STAGES_QUERY = gql`
-  query TaskStages(
-    $filter: TaskStageFilter!
-    $sorting: [TaskStageSort!]
-    $paging: OffsetPaging!
-  ) {
+  query TaskStages($filter: TaskStageFilter!, $sorting: [TaskStageSort!], $paging: OffsetPaging!) {
     taskStages(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount # Get the total count of task stages
       nodes {
@@ -261,11 +241,7 @@ export const TASK_STAGES_QUERY = gql`
 
 // Query to get tasks list
 export const TASKS_QUERY = gql`
-  query Tasks(
-    $filter: TaskFilter!
-    $sorting: [TaskSort!]
-    $paging: OffsetPaging!
-  ) {
+  query Tasks($filter: TaskFilter!, $sorting: [TaskSort!], $paging: OffsetPaging!) {
     tasks(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount # Get the total count of tasks
       nodes {

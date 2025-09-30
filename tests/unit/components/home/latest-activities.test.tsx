@@ -1,52 +1,50 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
-import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 
-import LatestActivities from "../latest-activities";
+import LatestActivities from '@/components/home/latest-activities';
 
-import { useList, useSubscription } from "@refinedev/core";
-import { useSelect } from "@refinedev/antd";
+import { useList, useSubscription } from '@refinedev/core';
+import { useSelect } from '@refinedev/antd';
 
-vi.mock("@refinedev/core", async () => {
-  const actual = await vi.importActual<typeof import("@refinedev/core")>("@refinedev/core");
+jest.mock('@refinedev/core', () => {
+  const actual = jest.requireActual<typeof import('@refinedev/core')>('@refinedev/core');
 
   return {
     ...actual,
-    useList: vi.fn(),
-    useSubscription: vi.fn(),
+    useList: jest.fn(),
+    useSubscription: jest.fn(),
   };
 });
 
-vi.mock("@refinedev/antd", async () => {
-  const actual = await vi.importActual<typeof import("@refinedev/antd")>("@refinedev/antd");
+jest.mock('@refinedev/antd', () => {
+  const actual = jest.requireActual<typeof import('@refinedev/antd')>('@refinedev/antd');
 
   return {
     ...actual,
-    useSelect: vi.fn(),
+    useSelect: jest.fn(),
   };
 });
 
-const mockUseList = useList as unknown as Mock;
-const mockUseSubscription = useSubscription as unknown as Mock;
-const mockUseSelect = useSelect as unknown as Mock;
+const mockUseList = useList as unknown as jest.Mock;
+const mockUseSubscription = useSubscription as unknown as jest.Mock;
+const mockUseSelect = useSelect as unknown as jest.Mock;
 
-describe("LatestActivities", () => {
+describe('LatestActivities', () => {
   const baseAudit = {
-    id: "1",
-    action: "CREATE",
-    targetEntity: "DealEntity",
-    targetId: "deal-1",
-    createdAt: "2024-07-15T10:30:00.000Z",
+    id: '1',
+    action: 'CREATE',
+    targetEntity: 'DealEntity',
+    targetId: 'deal-1',
+    createdAt: '2024-07-15T10:30:00.000Z',
     user: {
-      id: "user-1",
-      name: "Jane Doe",
+      id: 'user-1',
+      name: 'Jane Doe',
       avatarUrl: null,
     },
     changes: [],
   } as const;
 
-  const noopRefetch = vi.fn();
+  const noopRefetch = jest.fn();
 
   beforeEach(() => {
     mockUseList.mockReset();
@@ -65,22 +63,6 @@ describe("LatestActivities", () => {
 
     mockUseList.mockImplementation(() => ({ ...defaultListValue }));
 
-    if (!window.matchMedia) {
-      Object.defineProperty(window, "matchMedia", {
-        writable: true,
-        value: vi.fn().mockImplementation((query) => ({
-          matches: false,
-          media: query,
-          onchange: null,
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-        })),
-      });
-    }
-
     mockUseSubscription.mockReturnValue(undefined);
 
     mockUseSelect.mockReturnValue({
@@ -94,12 +76,12 @@ describe("LatestActivities", () => {
     });
   });
 
-  it("renders audit entries even when related lookups error", () => {
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  it('renders audit entries even when related lookups error', () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 
-    const dealsError = new Error("deals failed");
-    const companiesError = new Error("companies failed");
-    const stagesError = new Error("stages failed");
+    const dealsError = new Error('deals failed');
+    const companiesError = new Error('companies failed');
+    const stagesError = new Error('stages failed');
 
     mockUseList
       .mockImplementationOnce(() => ({
@@ -135,11 +117,11 @@ describe("LatestActivities", () => {
     render(<LatestActivities />);
 
     expect(screen.getByText(/Latest Activities/i)).toBeInTheDocument();
-    expect(screen.getByText("Jane Doe")).toBeInTheDocument();
-    expect(screen.getByText("created")).toBeInTheDocument();
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    expect(screen.getByText('created')).toBeInTheDocument();
 
     expect(warnSpy).toHaveBeenCalledWith(
-      "LatestActivities rendering with partial data",
+      'LatestActivities rendering with partial data',
       expect.objectContaining({
         dealsError,
         companiesError,
@@ -150,20 +132,20 @@ describe("LatestActivities", () => {
     warnSpy.mockRestore();
   });
 
-  it("normalizes entity names and renders deal details", () => {
+  it('normalizes entity names and renders deal details', () => {
     const auditEntry = {
       ...baseAudit,
-      action: "CREATE",
-      targetEntity: "Deal",
-      targetId: "deal-1",
+      action: 'CREATE',
+      targetEntity: 'Deal',
+      targetId: 'deal-1',
       user: {
-        id: "user-2",
-        name: "James Coffey",
+        id: 'user-2',
+        name: 'James Coffey',
         avatarUrl: null,
       },
       changes: [
-        { field: "title", from: null, to: "Oriental Bronze Towels" },
-        { field: "companyId", from: null, to: "company-1" },
+        { field: 'title', from: null, to: 'Oriental Bronze Towels' },
+        { field: 'companyId', from: null, to: 'company-1' },
       ],
     } as const;
 
@@ -179,15 +161,15 @@ describe("LatestActivities", () => {
         data: {
           data: [
             {
-              id: "deal-1",
-              title: "Oriental Bronze Towels",
-              stage: { id: "stage-1", title: "Prospecting" },
+              id: 'deal-1',
+              title: 'Oriental Bronze Towels',
+              stage: { id: 'stage-1', title: 'Prospecting' },
               company: {
-                id: "company-1",
-                name: "Terry, Kshlerin and Witting",
-                avatarUrl: "https://example.com/logo.png",
+                id: 'company-1',
+                name: 'Terry, Kshlerin and Witting',
+                avatarUrl: 'https://example.com/logo.png',
               },
-              createdAt: "2024-07-15T10:30:00.000Z",
+              createdAt: '2024-07-15T10:30:00.000Z',
             },
           ],
         },
@@ -199,9 +181,9 @@ describe("LatestActivities", () => {
         data: {
           data: [
             {
-              id: "company-1",
-              name: "Terry, Kshlerin and Witting",
-              avatarUrl: "https://example.com/logo.png",
+              id: 'company-1',
+              name: 'Terry, Kshlerin and Witting',
+              avatarUrl: 'https://example.com/logo.png',
             },
           ],
         },
@@ -222,21 +204,19 @@ describe("LatestActivities", () => {
 
     render(<LatestActivities />);
 
-    expect(screen.getByText("James Coffey")).toBeInTheDocument();
-    expect(screen.getByText("created")).toBeInTheDocument();
-    expect(screen.getByText("Oriental Bronze Towels")).toBeInTheDocument();
-    expect(screen.getByText("Terry, Kshlerin and Witting")).toBeInTheDocument();
+    expect(screen.getByText('James Coffey')).toBeInTheDocument();
+    expect(screen.getByText('created')).toBeInTheDocument();
+    expect(screen.getByText('Oriental Bronze Towels')).toBeInTheDocument();
+    expect(screen.getByText('Terry, Kshlerin and Witting')).toBeInTheDocument();
   });
 
-  it("uses audit change values for non-deal subjects", () => {
+  it('uses audit change values for non-deal subjects', () => {
     const auditEntry = {
       ...baseAudit,
-      action: "UPDATE",
-      targetEntity: "Contact",
-      targetId: "contact-1",
-      changes: [
-        { field: "name", from: "Old Name", to: "Alice Johnson" },
-      ],
+      action: 'UPDATE',
+      targetEntity: 'Contact',
+      targetId: 'contact-1',
+      changes: [{ field: 'name', from: 'Old Name', to: 'Alice Johnson' }],
     } as const;
 
     mockUseList
@@ -272,14 +252,14 @@ describe("LatestActivities", () => {
 
     render(<LatestActivities />);
 
-    expect(screen.getByText("updated")).toBeInTheDocument();
-    expect(screen.getByText("Alice Johnson")).toBeInTheDocument();
+    expect(screen.getByText('updated')).toBeInTheDocument();
+    expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
   });
 
-  it("returns null when audits fail", () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  it('returns null when audits fail', () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    const auditError = new Error("audits failed");
+    const auditError = new Error('audits failed');
 
     mockUseList
       .mockImplementationOnce(() => ({
@@ -303,8 +283,8 @@ describe("LatestActivities", () => {
 
     const { container } = render(<LatestActivities />);
 
-    expect(container.firstChild).toBeNull();
-    expect(errorSpy).toHaveBeenCalledWith("LatestActivities failed to load audits", {
+    expect(container).toBeEmptyDOMElement();
+    expect(errorSpy).toHaveBeenCalledWith('LatestActivities failed to load audits', {
       auditsError: auditError,
     });
 

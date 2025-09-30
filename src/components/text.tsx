@@ -1,19 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import { ConfigProvider, Typography } from "antd";
+import { ConfigProvider, Typography } from 'antd';
 
 export type TextProps = {
-  size?:
-    | "xs"
-    | "sm"
-    | "md"
-    | "lg"
-    | "xl"
-    | "xxl"
-    | "xxxl"
-    | "huge"
-    | "xhuge"
-    | "xxhuge";
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl' | 'huge' | 'xhuge' | 'xxhuge';
 } & React.ComponentProps<typeof Typography.Text>;
 
 // define the font sizes and line heights
@@ -61,7 +51,7 @@ const sizes = {
 };
 
 // a custom Text component that wraps/extends the antd Typography.Text component
-export const Text = ({ size = "sm", children, ...rest }: TextProps) => {
+export const Text = ({ size = 'sm', children, ...rest }: TextProps) => {
   return (
     // config provider is a top-level component that allows us to customize the global properties of antd components. For example, default antd theme
     // token is a term used by antd to refer to the design tokens like font size, font weight, color, etc

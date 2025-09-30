@@ -1,4 +1,4 @@
-import { Badge, List, Skeleton } from "antd";
+import { Badge, List, Skeleton } from 'antd';
 
 const UpcomingEventsSkeleton = () => {
   return (
@@ -9,7 +9,7 @@ const UpcomingEventsSkeleton = () => {
           <Skeleton.Button
             active
             style={{
-              height: "14px",
+              height: '14px',
             }}
           />
         }
@@ -17,9 +17,9 @@ const UpcomingEventsSkeleton = () => {
           <Skeleton.Button
             active
             style={{
-              width: "300px",
-              marginTop: "8px",
-              height: "16px",
+              width: '300px',
+              marginTop: '8px',
+              height: '16px',
             }}
           />
         }

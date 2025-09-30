@@ -1,27 +1,27 @@
-import { Button, Skeleton, Space } from "antd";
-import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Skeleton, Space } from 'antd';
+import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 
 const KanbanColumnSkeleton = ({ children }: React.PropsWithChildren) => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: "0 16px",
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0 16px',
       }}
     >
       <div
         style={{
-          padding: "12px",
+          padding: '12px',
         }}
       >
         <Space
           style={{
-            width: "100%",
-            justifyContent: "space-between",
+            width: '100%',
+            justifyContent: 'space-between',
           }}
         >
-          <Skeleton.Button size="small" style={{ width: "125px" }} />
+          <Skeleton.Button size="small" style={{ width: '125px' }} />
           <Button
             disabled
             type="text"
@@ -29,7 +29,7 @@ const KanbanColumnSkeleton = ({ children }: React.PropsWithChildren) => {
             icon={
               <MoreOutlined
                 style={{
-                  transform: "rotate(90deg)",
+                  transform: 'rotate(90deg)',
                 }}
               />
             }
@@ -40,16 +40,16 @@ const KanbanColumnSkeleton = ({ children }: React.PropsWithChildren) => {
       <div
         style={{
           flex: 1,
-          border: "2px dashed transparent",
-          borderRadius: "4px",
+          border: '2px dashed transparent',
+          borderRadius: '4px',
         }}
       >
         <div
           style={{
-            marginTop: "12px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
+            marginTop: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
           }}
         >
           {children}

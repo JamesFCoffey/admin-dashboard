@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { FilterDropdown, useSelect } from "@refinedev/antd";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { FilterDropdown, useSelect } from '@refinedev/antd';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
 import {
   DeleteOutlined,
@@ -9,41 +9,30 @@ import {
   EditOutlined,
   PlusOutlined,
   SearchOutlined,
-} from "@ant-design/icons";
-import {
-  App,
-  Button,
-  Card,
-  Form,
-  Input,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd";
-import type { SelectProps, TableProps } from "antd";
-import dayjs from "dayjs";
+} from '@ant-design/icons';
+import { App, Button, Card, Form, Input, Select, Space, Table, Tag, Tooltip } from 'antd';
+import type { SelectProps, TableProps } from 'antd';
+import dayjs from 'dayjs';
 
-import { COMPANIES_SELECT_QUERY, DEAL_STAGES_SELECT_QUERY, USERS_SELECT_QUERY } from "@/graphql/queries";
+import {
+  COMPANIES_SELECT_QUERY,
+  DEAL_STAGES_SELECT_QUERY,
+  USERS_SELECT_QUERY,
+} from '@/graphql/queries';
 import type {
   CompaniesSelectQuery,
   DealStagesSelectQuery,
   DealsListQuery,
   UsersSelectQuery,
-} from "@/graphql/types";
+} from '@/graphql/types';
 
-import { Text } from "@/components/text";
-import CustomAvatar from "@/components/custom-avatar";
-import DealFormModal from "@/components/deals/deal-form-modal";
-import SelectOptionWithAvatar from "@/components/select-option-with-avatar";
-import { currencyNumber } from "@/utilities";
-import {
-  type DealFormValues,
-  type DealUpsertPayload,
-  useDeals,
-} from "@/utilities/hooks";
-import { logger } from "@/utilities/logger";
+import { Text } from '@/components/text';
+import CustomAvatar from '@/components/custom-avatar';
+import DealFormModal from '@/components/deals/deal-form-modal';
+import SelectOptionWithAvatar from '@/components/select-option-with-avatar';
+import { currencyNumber } from '@/utilities';
+import { type DealFormValues, type DealUpsertPayload, useDeals } from '@/utilities/hooks';
+import { logger } from '@/utilities/logger';
 
 const formatCurrency = (value?: number | null) => currencyNumber(value ?? 0);
 
@@ -72,56 +61,53 @@ export const DealsList = () => {
     isDeleteLoading,
   } = useDeals();
 
-  const {
-    selectProps: companySelectProps,
-    queryResult: companiesQueryResult,
-  } = useSelect<GetFieldsFromList<CompaniesSelectQuery>>({
-    resource: "companies",
-    optionLabel: "name",
+  const { selectProps: companySelectProps, queryResult: companiesQueryResult } = useSelect<
+    GetFieldsFromList<CompaniesSelectQuery>
+  >({
+    resource: 'companies',
+    optionLabel: 'name',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: COMPANIES_SELECT_QUERY,
     },
     onSearch: (value) => [
       {
-        field: "name",
-        operator: "contains" as const,
+        field: 'name',
+        operator: 'contains' as const,
         value,
       },
     ],
   });
 
-  const {
-    selectProps: ownerSelectProps,
-    queryResult: ownersQueryResult,
-  } = useSelect<GetFieldsFromList<UsersSelectQuery>>({
-    resource: "users",
-    optionLabel: "name",
+  const { selectProps: ownerSelectProps, queryResult: ownersQueryResult } = useSelect<
+    GetFieldsFromList<UsersSelectQuery>
+  >({
+    resource: 'users',
+    optionLabel: 'name',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: USERS_SELECT_QUERY,
     },
     onSearch: (value) => [
       {
-        field: "name",
-        operator: "contains" as const,
+        field: 'name',
+        operator: 'contains' as const,
         value,
       },
     ],
   });
 
-  const {
-    selectProps: stageSelectProps,
-    queryResult: stagesQueryResult,
-  } = useSelect<GetFieldsFromList<DealStagesSelectQuery>>({
-    resource: "dealStages",
-    optionLabel: "title",
+  const { selectProps: stageSelectProps, queryResult: stagesQueryResult } = useSelect<
+    GetFieldsFromList<DealStagesSelectQuery>
+  >({
+    resource: 'dealStages',
+    optionLabel: 'title',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: DEAL_STAGES_SELECT_QUERY,
@@ -141,8 +127,8 @@ export const DealsList = () => {
   const ownersById = useMemo(() => mapById(owners), [owners]);
   const stagesById = useMemo(() => mapById(stages), [stages]);
 
-  const companyOptions = useMemo<SelectProps["options"]>(() => {
-    const fallback: SelectProps["options"] = companies.map((company) => ({
+  const companyOptions = useMemo<SelectProps['options']>(() => {
+    const fallback: SelectProps['options'] = companies.map((company) => ({
       value: String(company.id),
       label: (
         <SelectOptionWithAvatar
@@ -154,7 +140,7 @@ export const DealsList = () => {
       ),
     }));
 
-    const base: SelectProps["options"] =
+    const base: SelectProps['options'] =
       companySelectProps.options && companySelectProps.options.length > 0
         ? companySelectProps.options
         : fallback;
@@ -182,8 +168,8 @@ export const DealsList = () => {
     return base;
   }, [companies, companySelectProps.options, editingDeal?.company]);
 
-  const ownerOptions = useMemo<SelectProps["options"]>(() => {
-    const fallback: SelectProps["options"] = owners.map((owner) => ({
+  const ownerOptions = useMemo<SelectProps['options']>(() => {
+    const fallback: SelectProps['options'] = owners.map((owner) => ({
       value: String(owner.id),
       label: (
         <SelectOptionWithAvatar
@@ -195,7 +181,7 @@ export const DealsList = () => {
       ),
     }));
 
-    const base: SelectProps["options"] =
+    const base: SelectProps['options'] =
       ownerSelectProps.options && ownerSelectProps.options.length > 0
         ? ownerSelectProps.options
         : fallback;
@@ -223,22 +209,28 @@ export const DealsList = () => {
     return base;
   }, [editingDeal?.dealOwner, ownerSelectProps.options, owners]);
 
-  const stageOptions = useMemo<SelectProps["options"]>(() => {
+  const stageOptions = useMemo<SelectProps['options']>(() => {
     const base =
       stageSelectProps.options && stageSelectProps.options.length > 0
         ? [...stageSelectProps.options]
         : stages.map((stage) => ({ value: String(stage.id), label: stage.title }));
 
-    if (editingDeal?.stage && !base.find((option) => option?.value === String(editingDeal.stage?.id))) {
+    if (
+      editingDeal?.stage &&
+      !base.find((option) => option?.value === String(editingDeal.stage?.id))
+    ) {
       return [
         ...base,
-        { value: String(editingDeal.stage.id), label: editingDeal.stage.title ?? "" },
+        { value: String(editingDeal.stage.id), label: editingDeal.stage.title ?? '' },
       ];
     }
 
     return base;
   }, [editingDeal?.stage, stageSelectProps.options, stages]);
-  const fallbackOwnerId = useMemo(() => (owners[0]?.id ? String(owners[0].id) : undefined), [owners]);
+  const fallbackOwnerId = useMemo(
+    () => (owners[0]?.id ? String(owners[0].id) : undefined),
+    [owners],
+  );
   const missingOwnerNotifiedRef = useRef<string | null>(null);
 
   const ensureValidOwnerId = useCallback(
@@ -264,7 +256,9 @@ export const DealsList = () => {
       return;
     }
 
-    const existingOwnerId = editingDeal.dealOwner?.id ? String(editingDeal.dealOwner.id) : undefined;
+    const existingOwnerId = editingDeal.dealOwner?.id
+      ? String(editingDeal.dealOwner.id)
+      : undefined;
     const ownerExists = existingOwnerId ? ownersById[existingOwnerId] : null;
     const resolvedOwnerId = existingOwnerId
       ? ensureValidOwnerId(existingOwnerId)
@@ -279,7 +273,7 @@ export const DealsList = () => {
         message.info(
           fallbackOwner
             ? `Previous owner is unavailable, reassigned to ${fallbackOwner.name}.`
-            : "Previous owner is unavailable and will need reassignment before saving.",
+            : 'Previous owner is unavailable and will need reassignment before saving.',
         );
         missingOwnerNotifiedRef.current = key;
       }
@@ -310,9 +304,9 @@ export const DealsList = () => {
         };
 
   const tableOnChange = tableProps.onChange;
-  type TableOnChangeArgs = Parameters<NonNullable<TableProps<Deal>["onChange"]>>;
+  type TableOnChangeArgs = Parameters<NonNullable<TableProps<Deal>['onChange']>>;
 
-  const handleTableChange: TableProps<Deal>["onChange"] = useCallback(
+  const handleTableChange: TableProps<Deal>['onChange'] = useCallback(
     (
       pagination: TableOnChangeArgs[0],
       filters: TableOnChangeArgs[1],
@@ -323,8 +317,9 @@ export const DealsList = () => {
         return;
       }
 
-      if (filters && Object.prototype.hasOwnProperty.call(filters, "company")) {
-        const { company: _removed, ...rest } = filters as Record<string, unknown>;
+      if (filters && Object.prototype.hasOwnProperty.call(filters, 'company')) {
+        const rest = { ...(filters as Record<string, unknown>) };
+        delete rest.company;
         tableOnChange(
           pagination,
           rest as Parameters<NonNullable<typeof tableOnChange>>[1],
@@ -352,7 +347,7 @@ export const DealsList = () => {
     const normalizedOwnerId = ensureValidOwnerId(String(values.dealOwnerId));
     return {
       ...values,
-      value: typeof values.value === "number" ? values.value : 0,
+      value: typeof values.value === 'number' ? values.value : 0,
       company: companiesById[String(values.companyId)],
       dealOwner: ownersById[normalizedOwnerId] ?? ownersById[String(values.dealOwnerId)],
       stage: values.stageId ? stagesById[String(values.stageId)] : undefined,
@@ -363,12 +358,12 @@ export const DealsList = () => {
   const handleCreateSubmit = async (values: DealFormValues) => {
     try {
       await createDeal(buildPayload(values));
-      message.success("Deal created successfully");
+      message.success('Deal created successfully');
       setIsCreateModalOpen(false);
       createForm.resetFields();
     } catch (error) {
-      logger.error("Failed to create deal", error);
-      const description = error instanceof Error ? error.message : "Unable to create deal";
+      logger.error('Failed to create deal', error);
+      const description = error instanceof Error ? error.message : 'Unable to create deal';
       message.error(description);
     }
   };
@@ -385,11 +380,11 @@ export const DealsList = () => {
 
     try {
       await updateDeal(String(editingDeal.id), buildPayload(values));
-      message.success("Deal updated successfully");
+      message.success('Deal updated successfully');
       handleCloseEditModal();
     } catch (error) {
-      logger.error("Failed to update deal", error);
-      const description = error instanceof Error ? error.message : "Unable to update deal";
+      logger.error('Failed to update deal', error);
+      const description = error instanceof Error ? error.message : 'Unable to update deal';
       message.error(description);
     }
   };
@@ -398,17 +393,17 @@ export const DealsList = () => {
     const dealId = String(deal.id);
     modal.confirm({
       title: `Delete ${deal.title}?`,
-      content: "This deal will be removed from the pipeline and dashboard metrics.",
-      okText: "Delete",
-      okType: "danger",
-      autoFocusButton: "cancel",
+      content: 'This deal will be removed from the pipeline and dashboard metrics.',
+      okText: 'Delete',
+      okType: 'danger',
+      autoFocusButton: 'cancel',
       async onOk() {
         try {
           await deleteDeal(dealId);
-          message.success("Deal deleted");
+          message.success('Deal deleted');
         } catch (error) {
-          logger.error("Failed to delete deal", error);
-          const description = error instanceof Error ? error.message : "Unable to delete deal";
+          logger.error('Failed to delete deal', error);
+          const description = error instanceof Error ? error.message : 'Unable to delete deal';
           message.error(description);
           throw error;
         }
@@ -417,16 +412,16 @@ export const DealsList = () => {
   };
 
   const handleStageChange = async (deal: Deal, nextStageId: string) => {
-    if (String(deal.stage?.id ?? "") === nextStageId) {
+    if (String(deal.stage?.id ?? '') === nextStageId) {
       return;
     }
 
     try {
       await updateDealStage(String(deal.id), nextStageId, stagesById[nextStageId]);
-      message.success(`Deal moved to ${stagesById[nextStageId]?.title ?? "new stage"}`);
+      message.success(`Deal moved to ${stagesById[nextStageId]?.title ?? 'new stage'}`);
     } catch (error) {
-      logger.error("Failed to update deal stage", error);
-      const description = error instanceof Error ? error.message : "Unable to update stage";
+      logger.error('Failed to update deal stage', error);
+      const description = error instanceof Error ? error.message : 'Unable to update stage';
       message.error(description);
     }
   };
@@ -477,7 +472,7 @@ export const DealsList = () => {
             <Space direction="vertical" size={0}>
               <Text strong>{record.title}</Text>
               <Text size="xs" className="tertiary">
-                {dayjs(record.createdAt).format("MMM D, YYYY")}
+                {dayjs(record.createdAt).format('MMM D, YYYY')}
               </Text>
             </Space>
           )}
@@ -524,7 +519,9 @@ export const DealsList = () => {
           dataIndex="stage"
           render={(_, record) => {
             const dealId = String(record.id);
-            const isOptimistic = Boolean((record as Deal & { __optimistic?: boolean }).__optimistic);
+            const isOptimistic = Boolean(
+              (record as Deal & { __optimistic?: boolean }).__optimistic,
+            );
             const isUpdating = pendingUpdateSet.has(dealId);
 
             return (
@@ -545,9 +542,7 @@ export const DealsList = () => {
           title="Value"
           dataIndex="value"
           align="right"
-          render={(value: Deal["value"]) => (
-            <Tag color="green">{formatCurrency(value)}</Tag>
-          )}
+          render={(value: Deal['value']) => <Tag color="green">{formatCurrency(value)}</Tag>}
         />
         <Table.Column<Deal>
           title="Actions"
@@ -555,7 +550,9 @@ export const DealsList = () => {
           width={148}
           render={(_, record) => {
             const dealId = String(record.id);
-            const isOptimistic = Boolean((record as Deal & { __optimistic?: boolean }).__optimistic);
+            const isOptimistic = Boolean(
+              (record as Deal & { __optimistic?: boolean }).__optimistic,
+            );
             const isDeleting = pendingDeleteSet.has(dealId);
 
             return (
@@ -616,7 +613,7 @@ export const DealsList = () => {
       />
 
       <DealFormModal
-        title={`Edit ${editingDeal?.title ?? "deal"}`}
+        title={`Edit ${editingDeal?.title ?? 'deal'}`}
         open={Boolean(editingDeal)}
         form={editForm}
         companyOptions={companyOptions}

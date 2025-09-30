@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import dayjs from "dayjs";
-import { useTable } from "@refinedev/antd";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import dayjs from 'dayjs';
+import { useTable } from '@refinedev/antd';
 import {
   CrudFilters,
   HttpError,
@@ -9,22 +9,22 @@ import {
   useDelete,
   useSubscription,
   useUpdate,
-} from "@refinedev/core";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+} from '@refinedev/core';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
 import {
   CREATE_DEAL_MUTATION,
   DELETE_DEAL_MUTATION,
   UPDATE_DEAL_MUTATION,
-} from "@/graphql/mutations";
-import { DEALS_LIST_QUERY } from "@/graphql/queries";
+} from '@/graphql/mutations';
+import { DEALS_LIST_QUERY } from '@/graphql/queries';
 import type {
   CreateDealMutation,
   DealsListQuery,
   DeleteDealMutation,
   UpdateDealMutation,
-} from "@/graphql/types";
-import { logger } from "@/utilities/logger";
+} from '@/graphql/types';
+import { logger } from '@/utilities/logger';
 
 type DealRecord = GetFieldsFromList<DealsListQuery>;
 
@@ -37,9 +37,9 @@ export type DealFormValues = {
 };
 
 export type DealUpsertPayload = DealFormValues & {
-  company?: DealRecord["company"];
-  dealOwner?: DealRecord["dealOwner"];
-  stage?: DealRecord["stage"];
+  company?: DealRecord['company'];
+  dealOwner?: DealRecord['dealOwner'];
+  stage?: DealRecord['stage'];
 };
 
 type OptimisticDeal = DealRecord & { __optimistic: true };
@@ -50,38 +50,31 @@ type PendingDealsState = {
   deleted: Set<string>;
 };
 
-const DEAL_SUBSCRIPTION_TYPES: LiveEvent["type"][] = [
-  "created",
-  "updated",
-  "deleted",
-];
+const DEAL_SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
 export const useDeals = () => {
-  const {
-    tableProps,
-    tableQueryResult,
-  } = useTable<DealRecord>({
-    resource: "deals",
+  const { tableProps, tableQueryResult } = useTable<DealRecord>({
+    resource: 'deals',
     syncWithLocation: false,
     sorters: {
       initial: [
         {
-          field: "createdAt",
-          order: "desc",
+          field: 'createdAt',
+          order: 'desc',
         },
       ],
     },
     filters: {
       initial: [
         {
-          field: "title",
-          operator: "contains" as const,
-          value: "",
+          field: 'title',
+          operator: 'contains' as const,
+          value: '',
         },
         {
-          field: "company.name",
-          operator: "contains" as const,
-          value: "",
+          field: 'company.name',
+          operator: 'contains' as const,
+          value: '',
         },
       ],
     },
@@ -91,21 +84,21 @@ export const useDeals = () => {
     meta: {
       gqlQuery: DEALS_LIST_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
-  const {
-    mutateAsync: createDealMutateAsync,
-    isLoading: isCreateLoading,
-  } = useCreate<CreateDealMutation, HttpError>();
-  const {
-    mutateAsync: updateDealMutateAsync,
-    isLoading: isUpdateLoading,
-  } = useUpdate<UpdateDealMutation, HttpError>();
-  const {
-    mutateAsync: deleteDealMutateAsync,
-    isLoading: isDeleteLoading,
-  } = useDelete<DeleteDealMutation, HttpError>();
+  const { mutateAsync: createDealMutateAsync, isLoading: isCreateLoading } = useCreate<
+    CreateDealMutation,
+    HttpError
+  >();
+  const { mutateAsync: updateDealMutateAsync, isLoading: isUpdateLoading } = useUpdate<
+    UpdateDealMutation,
+    HttpError
+  >();
+  const { mutateAsync: deleteDealMutateAsync, isLoading: isDeleteLoading } = useDelete<
+    DeleteDealMutation,
+    HttpError
+  >();
 
   const [pending, setPending] = useState<PendingDealsState>(() => ({
     created: {},
@@ -147,7 +140,7 @@ export const useDeals = () => {
 
   const paginationConfig = tableProps?.pagination;
   const baseTotal =
-    paginationConfig && typeof paginationConfig === "object" && "total" in paginationConfig
+    paginationConfig && typeof paginationConfig === 'object' && 'total' in paginationConfig
       ? (paginationConfig.total ?? baseDeals.length)
       : baseDeals.length;
   const totalCount = baseTotal + Object.keys(pending.created).length - pending.deleted.size;
@@ -216,17 +209,15 @@ export const useDeals = () => {
 
   const createDeal = useCallback(
     async ({ company, dealOwner, stage, value, ...values }: DealUpsertPayload) => {
-      const optimisticId = `optimistic-${Date.now()}-${Math.random()
-        .toString(16)
-        .slice(2)}`;
+      const optimisticId = `optimistic-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
       const optimisticDeal: OptimisticDeal = {
         id: optimisticId,
         title: values.title,
         value: value ?? 0,
         createdAt: new Date().toISOString(),
-        company: company as DealRecord["company"],
-        dealOwner: dealOwner as DealRecord["dealOwner"],
+        company: company as DealRecord['company'],
+        dealOwner: dealOwner as DealRecord['dealOwner'],
         stage: stage ?? null,
         __optimistic: true,
       } as OptimisticDeal;
@@ -241,7 +232,7 @@ export const useDeals = () => {
 
       try {
         await createDealMutateAsync({
-          resource: "deals",
+          resource: 'deals',
           values: {
             ...values,
             value: value ?? 0,
@@ -273,8 +264,8 @@ export const useDeals = () => {
         title: values.title,
         value: value ?? existing?.value ?? 0,
         createdAt: baseDeal.createdAt ?? new Date().toISOString(),
-        company: (company ?? existing?.company) as DealRecord["company"],
-        dealOwner: (dealOwner ?? existing?.dealOwner) as DealRecord["dealOwner"],
+        company: (company ?? existing?.company) as DealRecord['company'],
+        dealOwner: (dealOwner ?? existing?.dealOwner) as DealRecord['dealOwner'],
         stage: stage ?? existing?.stage ?? null,
       } as DealRecord;
 
@@ -288,7 +279,7 @@ export const useDeals = () => {
 
       try {
         await updateDealMutateAsync({
-          resource: "deals",
+          resource: 'deals',
           id,
           values: {
             ...values,
@@ -311,7 +302,7 @@ export const useDeals = () => {
   );
 
   const updateDealStage = useCallback(
-    async (id: string, stageId: string | null, stage?: DealRecord["stage"]) => {
+    async (id: string, stageId: string | null, stage?: DealRecord['stage']) => {
       const dealId = String(id);
       const existing = deals.find((deal) => String(deal.id) === dealId);
 
@@ -335,10 +326,10 @@ export const useDeals = () => {
       try {
         const nextStage = stage ?? existing.stage ?? null;
         const title = nextStage?.title?.toUpperCase();
-        const shouldSetCloseDate = title === "WON" || title === "LOST";
+        const shouldSetCloseDate = title === 'WON' || title === 'LOST';
         const now = dayjs();
         await updateDealMutateAsync({
-          resource: "deals",
+          resource: 'deals',
           id,
           values: {
             stageId,
@@ -377,7 +368,7 @@ export const useDeals = () => {
 
       try {
         await deleteDealMutateAsync({
-          resource: "deals",
+          resource: 'deals',
           id,
           meta: {
             gqlMutation: DELETE_DEAL_MUTATION,
@@ -395,18 +386,18 @@ export const useDeals = () => {
   );
 
   useSubscription({
-    channel: "resources/deals",
+    channel: 'resources/deals',
     types: DEAL_SUBSCRIPTION_TYPES,
     params: {
-      resource: "deals",
-      subscriptionType: "useList" as const,
+      resource: 'deals',
+      subscriptionType: 'useList' as const,
       filters: [] as CrudFilters,
     },
     meta: {
       gqlQuery: DEALS_LIST_QUERY,
     },
     onLiveEvent: () => {
-      logger.debug("[useDeals] live event received, refetching deals");
+      logger.debug('[useDeals] live event received, refetching deals');
       if (tableQueryResult?.refetch) {
         void tableQueryResult.refetch();
       }

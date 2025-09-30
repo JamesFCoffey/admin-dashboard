@@ -1,27 +1,23 @@
-import { renderHook } from "@testing-library/react";
-import { describe, expect, beforeEach, vi, it } from "vitest";
-import type { Mock } from "vitest";
+import { renderHook } from '@testing-library/react';
 
-import { useDashboardTotals } from "../use-dashboard-totals";
-import { useCustom, useSubscription } from "@refinedev/core";
-import type { DashboardTotalCountsQuery } from "@/graphql/types";
+import { useDashboardTotals } from '@/utilities/hooks/use-dashboard-totals';
+import { useCustom, useSubscription } from '@refinedev/core';
+import type { DashboardTotalCountsQuery } from '@/graphql/types';
 
-vi.mock("@refinedev/core", async () => {
-  const actual = await vi.importActual<typeof import("@refinedev/core")>(
-    "@refinedev/core",
-  );
+jest.mock('@refinedev/core', () => {
+  const actual = jest.requireActual<typeof import('@refinedev/core')>('@refinedev/core');
 
   return {
     ...actual,
-    useCustom: vi.fn(),
-    useSubscription: vi.fn(),
+    useCustom: jest.fn(),
+    useSubscription: jest.fn(),
   };
 });
 
-const mockedUseCustom = useCustom as unknown as Mock;
-const mockedUseSubscription = useSubscription as unknown as Mock;
+const mockedUseCustom = useCustom as unknown as jest.Mock;
+const mockedUseSubscription = useSubscription as unknown as jest.Mock;
 
-describe("useDashboardTotals", () => {
+describe('useDashboardTotals', () => {
   const totals: DashboardTotalCountsQuery = {
     companies: { totalCount: 10 },
     contacts: { totalCount: 20 },
@@ -35,12 +31,12 @@ describe("useDashboardTotals", () => {
       isFetching: false,
       isError: false,
       error: null,
-      refetch: vi.fn(),
+      refetch: jest.fn(),
     }));
     mockedUseSubscription.mockImplementation(() => undefined);
   });
 
-  it("returns aggregated totals from the query", () => {
+  it('returns aggregated totals from the query', () => {
     const { result } = renderHook(() => useDashboardTotals());
 
     expect(result.current.totals).toEqual({
@@ -51,7 +47,7 @@ describe("useDashboardTotals", () => {
     expect(result.current.isEmpty).toBe(false);
   });
 
-  it("flags empty state when totals are zero", () => {
+  it('flags empty state when totals are zero', () => {
     mockedUseCustom.mockImplementation(() => ({
       data: {
         data: {
@@ -64,7 +60,7 @@ describe("useDashboardTotals", () => {
       isFetching: false,
       isError: false,
       error: null,
-      refetch: vi.fn(),
+      refetch: jest.fn(),
     }));
 
     const { result } = renderHook(() => useDashboardTotals());

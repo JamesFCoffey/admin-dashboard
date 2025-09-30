@@ -1,5 +1,5 @@
-import { AccordionHeaderSkeleton } from "@/components";
-import { Text } from "./text";
+import { AccordionHeaderSkeleton } from '@/components';
+import { Text } from './text';
 
 type Props = React.PropsWithChildren<{
   accordionKey: string;
@@ -41,30 +41,30 @@ export const Accordion = ({
   return (
     <div
       style={{
-        display: "flex",
-        padding: "12px 24px",
-        gap: "12px",
-        alignItems: "start",
-        borderBottom: "1px solid #d9d9d9",
+        display: 'flex',
+        padding: '12px 24px',
+        gap: '12px',
+        alignItems: 'start',
+        borderBottom: '1px solid #d9d9d9',
       }}
     >
-      <div style={{ marginTop: "1px", flexShrink: 0 }}>{icon}</div>
+      <div style={{ marginTop: '1px', flexShrink: 0 }}>{icon}</div>
       {isActive ? (
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
             flex: 1,
           }}
         >
-          <Text strong onClick={toggleAccordion} style={{ cursor: "pointer" }}>
+          <Text strong onClick={toggleAccordion} style={{ cursor: 'pointer' }}>
             {label}
           </Text>
           {children}
         </div>
       ) : (
-        <div onClick={toggleAccordion} style={{ cursor: "pointer", flex: 1 }}>
+        <div onClick={toggleAccordion} style={{ cursor: 'pointer', flex: 1 }}>
           {fallback}
         </div>
       )}

@@ -1,6 +1,6 @@
-import { Button, Result } from "antd";
-import React from "react";
-import { logger } from "@/utilities/logger";
+import { Button, Result } from 'antd';
+import React from 'react';
+import { logger } from '@/utilities/logger';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -11,10 +11,7 @@ type ErrorBoundaryProps = React.PropsWithChildren<{
   fallback?: React.ReactNode;
 }>;
 
-export class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -25,13 +22,13 @@ export class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    logger.error("Unhandled error captured", error, errorInfo);
+    logger.error('Unhandled error captured', error, errorInfo);
   }
 
   handleReset = () => {
     this.setState({ hasError: false, error: undefined });
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
     }
   };
 
@@ -49,7 +46,7 @@ export class ErrorBoundary extends React.Component<
         status="error"
         title="Something went wrong"
         subTitle={
-          this.state.error?.message ?? "An unexpected error occurred while loading the dashboard."
+          this.state.error?.message ?? 'An unexpected error occurred while loading the dashboard.'
         }
         extra={
           <Button type="primary" onClick={this.handleReset}>

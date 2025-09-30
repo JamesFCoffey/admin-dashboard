@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 import {
   CrudFilters,
   HttpError,
@@ -8,23 +8,23 @@ import {
   useList,
   useSubscription,
   useUpdate,
-} from "@refinedev/core";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
-import dayjs from "dayjs";
+} from '@refinedev/core';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
+import dayjs from 'dayjs';
 
 import {
   CREATE_EVENT_MUTATION,
   DELETE_EVENT_MUTATION,
   UPDATE_EVENT_MUTATION,
-} from "@/graphql/mutations";
-import { DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY } from "@/graphql/queries";
+} from '@/graphql/mutations';
+import { DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY } from '@/graphql/queries';
 import type {
   CreateEventMutation,
   DashboardCalendarUpcomingEventsQuery,
   DeleteEventMutation,
   UpdateEventMutation,
-} from "@/graphql/types";
-import { logger } from "@/utilities/logger";
+} from '@/graphql/types';
+import { logger } from '@/utilities/logger';
 
 type EventRecord = GetFieldsFromList<DashboardCalendarUpcomingEventsQuery>;
 
@@ -46,50 +46,46 @@ type PendingEventsState = {
   deleted: Set<string>;
 };
 
-const EVENT_SUBSCRIPTION_TYPES: LiveEvent["type"][] = ["created", "updated", "deleted"];
+const EVENT_SUBSCRIPTION_TYPES: LiveEvent['type'][] = ['created', 'updated', 'deleted'];
 
-const today = () => dayjs().startOf("day").format("YYYY-MM-DD");
+const today = () => dayjs().startOf('day').format('YYYY-MM-DD');
 
 export const useEvents = (options?: { limit?: number }) => {
   const limit = options?.limit ?? 5;
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    error,
-    refetch,
-  } = useList<GetFieldsFromList<DashboardCalendarUpcomingEventsQuery>>({
-    resource: "events",
+  const { data, isLoading, isFetching, error, refetch } = useList<
+    GetFieldsFromList<DashboardCalendarUpcomingEventsQuery>
+  >({
+    resource: 'events',
     pagination: {
       pageSize: limit,
     },
-    sorters: [{ field: "startDate", order: "asc" }],
+    sorters: [{ field: 'startDate', order: 'asc' }],
     filters: [
       {
-        field: "startDate",
-        operator: "gte" as const,
+        field: 'startDate',
+        operator: 'gte' as const,
         value: today(),
       },
     ],
     meta: {
       gqlQuery: DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY,
     },
-    liveMode: "manual",
+    liveMode: 'manual',
   });
 
-  const {
-    mutateAsync: createEventMutateAsync,
-    isLoading: isCreateLoading,
-  } = useCreate<CreateEventMutation, HttpError>();
-  const {
-    mutateAsync: updateEventMutateAsync,
-    isLoading: isUpdateLoading,
-  } = useUpdate<UpdateEventMutation, HttpError>();
-  const {
-    mutateAsync: deleteEventMutateAsync,
-    isLoading: isDeleteLoading,
-  } = useDelete<DeleteEventMutation, HttpError>();
+  const { mutateAsync: createEventMutateAsync, isLoading: isCreateLoading } = useCreate<
+    CreateEventMutation,
+    HttpError
+  >();
+  const { mutateAsync: updateEventMutateAsync, isLoading: isUpdateLoading } = useUpdate<
+    UpdateEventMutation,
+    HttpError
+  >();
+  const { mutateAsync: deleteEventMutateAsync, isLoading: isDeleteLoading } = useDelete<
+    DeleteEventMutation,
+    HttpError
+  >();
 
   const [pending, setPending] = useState<PendingEventsState>(() => ({
     created: {},
@@ -117,8 +113,8 @@ export const useEvents = (options?: { limit?: number }) => {
         };
       });
 
-    return [...optimisticCreates, ...hydratedBase].sort((a, b) =>
-      dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
+    return [...optimisticCreates, ...hydratedBase].sort(
+      (a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
     );
   }, [data?.data, pending.created, pending.deleted, pending.updated]);
 
@@ -175,9 +171,7 @@ export const useEvents = (options?: { limit?: number }) => {
 
   const createEvent = useCallback(
     async (values: EventFormValues) => {
-      const optimisticId = `optimistic-${Date.now()}-${Math.random()
-        .toString(16)
-        .slice(2)}`;
+      const optimisticId = `optimistic-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
       const optimisticEvent: OptimisticEvent = {
         id: optimisticId,
@@ -198,7 +192,7 @@ export const useEvents = (options?: { limit?: number }) => {
 
       try {
         await createEventMutateAsync({
-          resource: "events",
+          resource: 'events',
           values: {
             title: values.title,
             color: values.color,
@@ -248,7 +242,7 @@ export const useEvents = (options?: { limit?: number }) => {
 
       try {
         await updateEventMutateAsync({
-          resource: "events",
+          resource: 'events',
           id,
           values: {
             title: values.title,
@@ -288,7 +282,7 @@ export const useEvents = (options?: { limit?: number }) => {
 
       try {
         await deleteEventMutateAsync({
-          resource: "events",
+          resource: 'events',
           id,
           meta: {
             gqlMutation: DELETE_EVENT_MUTATION,
@@ -304,15 +298,15 @@ export const useEvents = (options?: { limit?: number }) => {
   );
 
   useSubscription({
-    channel: "resources/events",
+    channel: 'resources/events',
     types: EVENT_SUBSCRIPTION_TYPES,
     params: {
-      resource: "events",
-      subscriptionType: "useList" as const,
+      resource: 'events',
+      subscriptionType: 'useList' as const,
       filters: [
         {
-          field: "startDate",
-          operator: "gte" as const,
+          field: 'startDate',
+          operator: 'gte' as const,
           value: today(),
         },
       ] as CrudFilters,
@@ -321,7 +315,7 @@ export const useEvents = (options?: { limit?: number }) => {
       gqlQuery: DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY,
     },
     onLiveEvent: () => {
-      logger.debug("[useEvents] live event received, refetching events");
+      logger.debug('[useEvents] live event received, refetching events');
       void refetch();
     },
   });

@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import { CalendarOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { App, Badge, Button, Card, Form, List, Space, Tooltip } from "antd";
-import dayjs from "dayjs";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { CalendarOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { App, Badge, Button, Card, Form, List, Tooltip } from 'antd';
+import dayjs from 'dayjs';
+import { GetFieldsFromList } from '@refinedev/nestjs-query';
 
-import EventFormModal from "@/components/events/event-form-modal";
-import UpcomingEventsSkeleton from "@/components/skeleton/upcoming-events";
-import { EVENT_CATEGORIES_SELECT_QUERY } from "@/graphql/queries";
-import type { EventCategoriesSelectQuery } from "@/graphql/types";
-import { getDate } from "@/utilities/helpers";
-import { useSelect } from "@refinedev/antd";
-import { Text } from "../text";
-import { useEvents, type EventFormValues } from "@/utilities/hooks";
-import { logger } from "@/utilities/logger";
+import EventFormModal from '@/components/events/event-form-modal';
+import UpcomingEventsSkeleton from '@/components/skeleton/upcoming-events';
+import { EVENT_CATEGORIES_SELECT_QUERY } from '@/graphql/queries';
+import type { EventCategoriesSelectQuery } from '@/graphql/types';
+import { getDate } from '@/utilities/helpers';
+import { useSelect } from '@refinedev/antd';
+import { Text } from '../text';
+import { useEvents, type EventFormValues } from '@/utilities/hooks';
+import { logger } from '@/utilities/logger';
 
 type EventModalFormValues = {
   title: string;
@@ -36,13 +36,13 @@ const UpcomingEvents = () => {
     isDeleteLoading,
   } = useEvents({ limit: 5 });
 
-  const {
-    queryResult: categoriesQueryResult,
-  } = useSelect<GetFieldsFromList<EventCategoriesSelectQuery>>({
-    resource: "eventCategories",
-    optionLabel: "title",
+  const { queryResult: categoriesQueryResult } = useSelect<
+    GetFieldsFromList<EventCategoriesSelectQuery>
+  >({
+    resource: 'eventCategories',
+    optionLabel: 'title',
     pagination: {
-      mode: "off",
+      mode: 'off',
     },
     meta: {
       gqlQuery: EVENT_CATEGORIES_SELECT_QUERY,
@@ -75,8 +75,8 @@ const UpcomingEvents = () => {
   const handleOpenCreateModal = () => {
     createForm.resetFields();
     createForm.setFieldsValue({
-      dateRange: [dayjs().add(1, "hour"), dayjs().add(2, "hour")],
-      color: "#1677ff",
+      dateRange: [dayjs().add(1, 'hour'), dayjs().add(2, 'hour')],
+      color: '#1677ff',
     });
     setIsCreateModalOpen(true);
   };
@@ -86,7 +86,7 @@ const UpcomingEvents = () => {
 
   const handleCreate = async (values: EventFormValues) => {
     if (!defaultCategoryId) {
-      message.error("No event categories are available for scheduling.");
+      message.error('No event categories are available for scheduling.');
       return;
     }
 
@@ -97,12 +97,12 @@ const UpcomingEvents = () => {
         description: values.title,
         participantIds: [],
       });
-      message.success("Event created");
+      message.success('Event created');
       setIsCreateModalOpen(false);
       createForm.resetFields();
     } catch (error) {
-      logger.error("Failed to create event", error);
-      const description = error instanceof Error ? error.message : "Unable to create event";
+      logger.error('Failed to create event', error);
+      const description = error instanceof Error ? error.message : 'Unable to create event';
       message.error(description);
     }
   };
@@ -122,11 +122,11 @@ const UpcomingEvents = () => {
         ...values,
         description: values.title,
       });
-      message.success("Event updated");
+      message.success('Event updated');
       handleCloseEditModal();
     } catch (error) {
-      logger.error("Failed to update event", error);
-      const description = error instanceof Error ? error.message : "Unable to update event";
+      logger.error('Failed to update event', error);
+      const description = error instanceof Error ? error.message : 'Unable to update event';
       message.error(description);
     }
   };
@@ -136,17 +136,17 @@ const UpcomingEvents = () => {
 
     modal.confirm({
       title: `Delete ${event.title}?`,
-      content: "This event will be removed from the dashboard calendar.",
-      okText: "Delete",
-      okType: "danger",
-      autoFocusButton: "cancel",
+      content: 'This event will be removed from the dashboard calendar.',
+      okText: 'Delete',
+      okType: 'danger',
+      autoFocusButton: 'cancel',
       async onOk() {
         try {
           await deleteEvent(eventId);
-          message.success("Event deleted");
+          message.success('Event deleted');
         } catch (error) {
-          logger.error("Failed to delete event", error);
-          const description = error instanceof Error ? error.message : "Unable to delete event";
+          logger.error('Failed to delete event', error);
+          const description = error instanceof Error ? error.message : 'Unable to delete event';
           message.error(description);
           throw error;
         }
@@ -159,13 +159,13 @@ const UpcomingEvents = () => {
 
   return (
     <Card
-      style={{ height: "100%" }}
-      headStyle={{ padding: "8px 16px" }}
-      bodyStyle={{ padding: "0 1rem" }}
+      style={{ height: '100%' }}
+      headStyle={{ padding: '8px 16px' }}
+      bodyStyle={{ padding: '0 1rem' }}
       title={
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <CalendarOutlined />
-          <Text size="sm" style={{ marginLeft: "0.7rem" }}>
+          <Text size="sm" style={{ marginLeft: '0.7rem' }}>
             Upcoming Events
           </Text>
         </div>
@@ -194,7 +194,9 @@ const UpcomingEvents = () => {
           renderItem={(item) => {
             const renderDate = getDate(item.startDate, item.endDate);
             const eventId = String(item.id);
-            const isOptimistic = Boolean((item as (typeof events)[number] & { __optimistic?: boolean }).__optimistic);
+            const isOptimistic = Boolean(
+              (item as (typeof events)[number] & { __optimistic?: boolean }).__optimistic,
+            );
 
             return (
               <List.Item
@@ -247,10 +249,10 @@ const UpcomingEvents = () => {
       {!isBusy && isEmpty && (
         <span
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "220px",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '220px',
           }}
         >
           No upcoming events
@@ -270,7 +272,7 @@ const UpcomingEvents = () => {
       />
 
       <EventFormModal
-        title={`Edit ${editingEvent?.title ?? "event"}`}
+        title={`Edit ${editingEvent?.title ?? 'event'}`}
         open={Boolean(editingEvent)}
         form={editForm}
         confirmLoading={Boolean(editingEvent) && isUpdateLoading}

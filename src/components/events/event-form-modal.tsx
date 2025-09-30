@@ -1,9 +1,9 @@
-import { DatePicker, Form, Input, Modal } from "antd";
-import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
-import type { FormInstance } from "antd";
+import { DatePicker, Form, Input, Modal } from 'antd';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import type { FormInstance } from 'antd';
 
-import type { EventFormValues } from "@/utilities/hooks";
+import type { EventFormValues } from '@/utilities/hooks';
 
 const { RangePicker } = DatePicker;
 
@@ -24,7 +24,7 @@ export type EventFormModalProps = {
 };
 
 const disabledDate = (current: Dayjs) => {
-  return current && current < dayjs().startOf("day");
+  return current && current < dayjs().startOf('day');
 };
 
 const EventFormModal = ({
@@ -34,7 +34,7 @@ const EventFormModal = ({
   onCancel,
   onSubmit,
   confirmLoading = false,
-  defaultColor = "#1677ff",
+  defaultColor = '#1677ff',
 }: EventFormModalProps) => {
   return (
     <Modal
@@ -65,18 +65,18 @@ const EventFormModal = ({
         <Form.Item
           label="Event title"
           name="title"
-          rules={[{ required: true, message: "Please enter an event title" }]}
+          rules={[{ required: true, message: 'Please enter an event title' }]}
         >
           <Input autoFocus placeholder="e.g. Q4 planning meeting" />
         </Form.Item>
         <Form.Item
           label="Date & time"
           name="dateRange"
-          rules={[{ required: true, message: "Please select a start and end time" }]}
+          rules={[{ required: true, message: 'Please select a start and end time' }]}
         >
           <RangePicker
             showTime
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             format="MMM D, YYYY HH:mm"
             disabledDate={disabledDate}
           />
@@ -84,7 +84,7 @@ const EventFormModal = ({
         <Form.Item
           label="Color"
           name="color"
-          rules={[{ required: true, message: "Please select a color" }]}
+          rules={[{ required: true, message: 'Please select a color' }]}
         >
           <Input type="color" />
         </Form.Item>
