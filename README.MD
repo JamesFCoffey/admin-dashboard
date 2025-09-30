@@ -60,21 +60,19 @@ Run these locally before opening a pull request to mirror CI.
 The `CI` workflow in `.github/workflows/ci.yml` runs on pull requests and pushes to `main`:
 - Installs dependencies via `npm ci` on Node 18.
 - Executes linting, type checking, Jest unit tests, GraphQL codegen verification, and a production `next build`.
-- Deploys a Vercel preview automatically for pushes to `main` once checks pass.
-- Supports a manual production promotion through **Run workflow → deploy-target: production**.
+- Produces build output for confidence, but does **not** deploy.
 
-Required GitHub secrets:
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-These should come from the target Vercel project (Settings → Tokens / General → Environment Variables). Preview deployments run after every push to `main`; production requires an intentional button press.
+Vercel’s native Git integration handles deployments. Every push gets a Preview deploy; if automatic production is disabled you can promote a preview manually from the Vercel dashboard.
 
 ## Deployment Playbook
 1. Confirm `main` is green in GitHub (`CI` workflow).
-2. Trigger **Run workflow** → `deploy-target: production` to publish to Vercel production.
+2. In Vercel, open the latest Preview deployment and click **Promote to Production** (available when automatic production deploys are disabled under Project Settings → Git → Production Branch).
 3. Verify OAuth callbacks in Vercel (`Settings → Domains`) and confirm real-time widgets update by interacting with the kanban board.
 4. Capture any notes in `docs/runbooks` if unusual steps were required.
+
+### Optional: Disable Automatic Production Deploys
+- In Vercel Project Settings → Git, toggle **“Create Production Deployments for the Production Branch”** off.
+- Promotions are now manual: review a preview, hit **Promote**, and the production domain updates without waiting for another push.
 
 ## Operational Runbooks
 - Schema changes: `docs/runbooks/schema-updates.md`

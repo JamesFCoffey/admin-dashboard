@@ -41,7 +41,7 @@
 
 5. **CI/CD & Documentation**
 
-   - GitHub Actions workflow (`.github/workflows/ci.yml`) runs install, lint, typecheck, tests, build, codegen verification, and deploys previews; manual promotion handles production.
+   - GitHub Actions workflow (`.github/workflows/ci.yml`) runs install, lint, typecheck, tests, build, codegen verification. Vercel Git integration covers deploys with manual promotion when needed.
    - README documents deploy process, env vars, testing commands, architecture snapshot; runbooks live in `docs/runbooks`.
    - Maintain assets (screenshots/Loom) under `docs/assets/` for portfolio-ready presentation.
 
@@ -57,7 +57,7 @@
 - **Realtime Data & State Refactor**: Feature hooks/contexts with live subscriptions and optimistic updates across Kanban/dashboard/CRM.
 - **CRM Data Interactivity Enhancement**: Contacts/deals/events CRUD wired to live provider, dashboards/cards update instantly.
 - **Quality Tooling & Test Suite**: ESLint/Prettier/TypeScript strictness, Jest, Playwright, `npm run lint/typecheck/test/e2e`, GraphQL codegen verification.
-- **CI/CD & Documentation Overhaul**: GitHub Actions pipeline + Vercel deploys, README overhaul, runbooks for schema updates & seeding, asset directory with `.gitkeep` placeholder.
+- **CI/CD & Documentation Overhaul**: GitHub Actions quality pipeline, Vercel Git-based deploy strategy (manual promotion optional), README overhaul, runbooks for schema updates & seeding, asset directory with `.gitkeep` placeholder.
 
 ## Open Questions & Stretch Goals
 
