@@ -1,8 +1,7 @@
 # Logs
-
 logs
-_.log
-npm-debug.log_
+*.log
+npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
@@ -11,21 +10,22 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-\*.local
+*.local
 
 # Editor directories and files
-
-.vscode/_
+.vscode/
 .venv
 .env.local
 !.vscode/extensions.json
 .idea
 .DS_Store
-_.suo
-_.ntvs_
-_.njsproj
-_.sln
-\*.sw?
-.next
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.next/
+.next-*/
 next-env.d.ts
 tsconfig.tsbuildinfo
+test-results/
