@@ -24,6 +24,8 @@ export const UserTag = ({ user }: Props) => {
         <CustomAvatar
           src={user.avatarUrl}
           name={user.name}
+          entityType="users"
+          entityId={user.id}
           style={{ display: "inline-flex" }}
         />
         {user.name}

@@ -1,4 +1,6 @@
-import { Col, Form, Input, InputNumber, Row, Select } from "antd";
+import { useMemo, useState } from "react";
+
+import { Button, Col, Form, Input, Row, Select, Space, Upload } from "antd";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { UPDATE_COMPANY_MUTATION } from "@/graphql/mutations";
 import CustomAvatar from "@/components/custom-avatar";
@@ -13,6 +15,14 @@ import {
   industryOptions,
 } from "@/constants";
 import { CompanyContactsTable } from "./contacts-table";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import type { RcFile } from "antd/es/upload/interface";
+import {
+  customAvatarStore,
+  readFileAsDataUrl,
+  useCustomAvatar,
+} from "@/utilities/custom-avatar-store";
+import { Text } from "@/components/text";
 
 const EditPage = () => {
   const { saveButtonProps, formProps, formLoading, queryResult } = useForm({
@@ -22,7 +32,68 @@ const EditPage = () => {
     },
   });
 
-  const { avatarUrl, name } = queryResult?.data?.data || {};
+  const companyRecord = queryResult?.data?.data;
+  const companyId = companyRecord?.id;
+  const companyName = companyRecord?.name ?? "";
+  const serverAvatar = companyRecord?.avatarUrl ?? undefined;
+
+  const customLogo = useCustomAvatar("companies", companyId);
+
+  const [pendingLogo, setPendingLogo] = useState<string | null | undefined>(
+    undefined,
+  );
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
+
+  const displayLogo = useMemo(() => {
+    if (pendingLogo !== undefined) {
+      return pendingLogo ?? serverAvatar;
+    }
+
+    return customLogo ?? serverAvatar;
+  }, [pendingLogo, customLogo, serverAvatar]);
+
+  const handleLogoUpload = async (file: RcFile) => {
+    try {
+      setIsLogoUploading(true);
+      const dataUrl = await readFileAsDataUrl(file);
+      setPendingLogo(dataUrl);
+    } catch (error) {
+      console.error("Failed to process company logo", error);
+    } finally {
+      setIsLogoUploading(false);
+    }
+
+    return false;
+  };
+
+  const handleLogoRemoval = () => {
+    if (pendingLogo === null) {
+      setPendingLogo(undefined);
+      return;
+    }
+
+    setPendingLogo(null);
+  };
+
+  const { onFinish: originalOnFinish, ...restFormProps } = formProps;
+
+  const handleFinish: typeof originalOnFinish = async (values) => {
+    const result = await originalOnFinish?.(values);
+
+    if (result !== false && companyId) {
+      if (pendingLogo !== undefined) {
+        if (pendingLogo) {
+          customAvatarStore.setAvatar("companies", companyId, pendingLogo);
+        } else {
+          customAvatarStore.clearAvatar("companies", companyId);
+        }
+      }
+
+      setPendingLogo(undefined);
+    }
+
+    return result;
+  };
   const { selectProps, queryResult: queryResultUsers } = useSelect<
     GetFieldsFromList<UsersSelectQuery>
   >({
@@ -44,13 +115,40 @@ const EditPage = () => {
             saveButtonProps={saveButtonProps}
             breadcrumb={false}
           >
-            <Form {...formProps} layout="vertical">
-              <CustomAvatar
-                shape="square"
-                src={avatarUrl}
-                name={getNameInitials(name || "")}
-                style={{ width: 96, height: 96, marginBottom: "24px" }}
-              />
+            <Form {...restFormProps} layout="vertical" onFinish={handleFinish}>
+              <Space direction="vertical" size={12} style={{ marginBottom: "24px" }}>
+                <CustomAvatar
+                  shape="square"
+                  src={displayLogo}
+                  name={getNameInitials(companyName)}
+                  entityType="companies"
+                  entityId={companyId}
+                  preferProvidedSource={pendingLogo !== undefined}
+                  style={{ width: 96, height: 96 }}
+                />
+                <Space size={8} wrap>
+                  <Upload
+                    accept="image/*"
+                    showUploadList={false}
+                    beforeUpload={handleLogoUpload}
+                    disabled={isLogoUploading}
+                  >
+                    <Button icon={<UploadOutlined />} loading={isLogoUploading}>
+                      Upload logo
+                    </Button>
+                  </Upload>
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={handleLogoRemoval}
+                    disabled={pendingLogo === undefined && !customLogo}
+                  >
+                    Remove custom logo
+                  </Button>
+                  <Text size="xs" className="tertiary">
+                    Logos are stored locally. Save changes to keep updates.
+                  </Text>
+                </Space>
+              </Space>
               <Form.Item
                 label="Sales owner"
                 name="salesOwnerId"
@@ -66,28 +164,46 @@ const EditPage = () => {
                         <SelectOptionWithAvatar
                           name={user.name}
                           avatarUrl={user.avatarUrl ?? undefined}
+                          entityType="users"
+                          entityId={user.id}
                         />
                       ),
                     })) ?? []
                   }
                 />
               </Form.Item>
-              <Form.Item>
-                <Select options={companySizeOptions} />
-              </Form.Item>
-              <Form.Item>
-                <InputNumber
-                  autoFocus
-                  addonBefore="$"
-                  min={0}
-                  placeholder="0.00"
+              <Form.Item
+                label="Company size"
+                name="companySize"
+                initialValue={formProps?.initialValues?.companySize}
+              >
+                <Select
+                  placeholder="Select company size"
+                  options={companySizeOptions}
+                  allowClear
                 />
               </Form.Item>
-              <Form.Item label="Industry">
-                <Select options={industryOptions} />
+              <Form.Item
+                label="Industry"
+                name="industry"
+                initialValue={formProps?.initialValues?.industry}
+              >
+                <Select
+                  placeholder="Select industry"
+                  options={industryOptions}
+                  allowClear
+                />
               </Form.Item>
-              <Form.Item label="Business type">
-                <Select options={businessTypeOptions} />
+              <Form.Item
+                label="Business type"
+                name="businessType"
+                initialValue={formProps?.initialValues?.businessType}
+              >
+                <Select
+                  placeholder="Select business type"
+                  options={businessTypeOptions}
+                  allowClear
+                />
               </Form.Item>
               <Form.Item label="Country" name="country">
                 <Input placeholder="Country" />

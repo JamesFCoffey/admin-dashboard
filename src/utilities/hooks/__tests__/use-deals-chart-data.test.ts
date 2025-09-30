@@ -32,15 +32,15 @@ describe("useDealsChartData", () => {
     dealsAggregate: [
       {
         groupBy: {
-          closeDateMonth: "01",
-          closeDateYear: "2024",
+          closeDateMonth: 1,
+          closeDateYear: 2024,
         },
         sum: {
           value: 5000,
         },
       },
     ],
-  } as ChartNode;
+  };
 
   const lostDeal: ChartNode = {
     id: "stage-lost",
@@ -48,15 +48,15 @@ describe("useDealsChartData", () => {
     dealsAggregate: [
       {
         groupBy: {
-          closeDateMonth: "02",
-          closeDateYear: "2024",
+          closeDateMonth: 2,
+          closeDateYear: 2024,
         },
         sum: {
           value: 1500,
         },
       },
     ],
-  } as ChartNode;
+  };
 
   beforeEach(() => {
     mockedUseList.mockImplementation(() => ({

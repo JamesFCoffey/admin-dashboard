@@ -99,3 +99,141 @@ export const UPDATE_TASK_MUTATION = gql`
     }
   }
 `;
+
+export const CREATE_CONTACT_MUTATION = gql`
+  mutation CreateContact($input: CreateOneContactInput!) {
+    createOneContact(input: $input) {
+      id
+      name
+      jobTitle
+      email
+      phone
+      status
+      avatarUrl
+      createdAt
+      salesOwner {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+`;
+
+export const UPDATE_CONTACT_MUTATION = gql`
+  mutation UpdateContact($input: UpdateOneContactInput!) {
+    updateOneContact(input: $input) {
+      id
+      name
+      jobTitle
+      email
+      phone
+      status
+      avatarUrl
+      createdAt
+      salesOwner {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+`;
+
+export const DELETE_CONTACT_MUTATION = gql`
+  mutation DeleteContact($input: DeleteOneContactInput!) {
+    deleteOneContact(input: $input) {
+      id
+    }
+  }
+`;
+
+export const CREATE_DEAL_MUTATION = gql`
+  mutation CreateDeal($input: CreateOneDealInput!) {
+    createOneDeal(input: $input) {
+      id
+      title
+      value
+      createdAt
+      stage {
+        id
+        title
+      }
+      company {
+        id
+        name
+        avatarUrl
+      }
+      dealOwner {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+`;
+
+export const UPDATE_DEAL_MUTATION = gql`
+  mutation UpdateDeal($input: UpdateOneDealInput!) {
+    updateOneDeal(input: $input) {
+      id
+      title
+      value
+      createdAt
+      stage {
+        id
+        title
+      }
+      company {
+        id
+        name
+        avatarUrl
+      }
+      dealOwner {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+`;
+
+export const DELETE_DEAL_MUTATION = gql`
+  mutation DeleteDeal($input: DeleteOneDealInput!) {
+    deleteOneDeal(input: $input) {
+      id
+    }
+  }
+`;
+
+export const CREATE_EVENT_MUTATION = gql`
+  mutation CreateEvent($input: CreateOneEventInput!) {
+    createOneEvent(input: $input) {
+      id
+      title
+      color
+      startDate
+      endDate
+    }
+  }
+`;
+
+export const UPDATE_EVENT_MUTATION = gql`
+  mutation UpdateEvent($input: UpdateOneEventInput!) {
+    updateOneEvent(input: $input) {
+      id
+      title
+      color
+      startDate
+      endDate
+    }
+  }
+`;
+
+export const DELETE_EVENT_MUTATION = gql`
+  mutation DeleteEvent($input: DeleteOneEventInput!) {
+    deleteOneEvent(input: $input) {
+      id
+    }
+  }
+`;

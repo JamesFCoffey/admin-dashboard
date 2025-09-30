@@ -7,6 +7,7 @@ import "@refinedev/antd/dist/reset.css";
 
 import { authProvider, dataProvider, liveProvider } from "./providers";
 import { Home, ForgotPassword, Login, Register, CompanyList } from "./routes";
+import DealsList from "./routes/deals/list";
 
 import routerBindings, {
   CatchAllNavigate,
@@ -58,6 +59,7 @@ function SessionRedirectGuard() {
           <Route path="new" element={<Create />} />
           <Route path="edit/:id" element={<Edit />} />
         </Route>
+        <Route path="/deals" element={<DealsList />} />
         <Route
           path="/tasks"
           element={

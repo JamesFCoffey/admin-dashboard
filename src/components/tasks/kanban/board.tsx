@@ -35,7 +35,7 @@ export const KanbanBoardContainer = ({ children }: React.PropsWithChildren) => {
 };
 
 type Props = {
-  onDragEvent: (event: DragEndEvent) => void;
+  onDragEnd: (event: DragEndEvent) => void;
 };
 
 export const KanbanBoard = ({

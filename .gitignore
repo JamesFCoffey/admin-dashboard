@@ -28,3 +28,4 @@ _.sln
 \*.sw?
 .next
 next-env.d.ts
+tsconfig.tsbuildinfo

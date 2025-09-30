@@ -68,6 +68,8 @@ const Create = () => {
                     <SelectOptionWithAvatar
                       name={user.name}
                       avatarUrl={user.avatarUrl ?? undefined}
+                      entityType="users"
+                      entityId={user.id}
                     />
                   ),
                 })) ?? []

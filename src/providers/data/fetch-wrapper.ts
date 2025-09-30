@@ -1,4 +1,5 @@
 import { GraphQLFormattedError } from "graphql";
+import type { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 
 type Error = {
@@ -8,7 +9,7 @@ type Error = {
 
 const resolveAccessToken = async () => {
     const session = await getSession();
-    const maybeUser = session?.user as (typeof session.user & { accessToken?: string }) | undefined;
+    const maybeUser = session?.user as (Session["user"] & { accessToken?: string }) | undefined;
     return maybeUser?.accessToken;
 }
 
@@ -30,6 +31,14 @@ const customFetch = async(url: string, options: RequestInit) => {
     })
 }
 
+const shouldIgnoreError = (graphQLError?: GraphQLFormattedError | null) => {
+    if (!graphQLError?.message) {
+        return false;
+    }
+
+    return graphQLError.message.includes("Unable to find UserEntity with id");
+};
+
 const getGraphQLErrors = (body: Record<"errors", GraphQLFormattedError[] | undefined>): Error | null => {
     if(!body) {
         return {
@@ -39,10 +48,14 @@ const getGraphQLErrors = (body: Record<"errors", GraphQLFormattedError[] | undef
     }
 
     if("errors" in body) {
-        const errors = body?.errors;
+        const errors = (body?.errors ?? []).filter((error) => !shouldIgnoreError(error));
 
-        const messages = errors?.map((error) => error?.message)?.join("");
-        const code = errors?.[0]?.extensions?.code;
+        if(errors.length === 0) {
+            return null;
+        }
+
+        const messages = errors.map((error) => error?.message).join("");
+        const code = errors[0]?.extensions?.code;
 
         return {
             message: messages || JSON.stringify(errors),

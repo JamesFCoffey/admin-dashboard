@@ -11,20 +11,23 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { getDefaultFilter, useGo } from "@refinedev/core";
+import { getDefaultFilter, useGo, HttpError } from "@refinedev/core";
 import { Input, Space, Table } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { currencyNumber } from "@/utilities";
+
+type TableCompany = Pick<Company, "id" | "name" | "avatarUrl" | "dealsAggregate">;
 
 export const CompanyList = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
-  const { tableProps, filters } = useTable({
+  const { tableProps, filters } = useTable<TableCompany, HttpError, { name?: string }>({
     resource: "companies",
     onSearch: (values) => {
       return [
         {
           field: "name",
           operator: "contains",
-          value: values.name,
+          value: values?.name,
         },
       ];
     },
@@ -43,7 +46,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
       initial: [
         {
           field: "name",
-          operator: "contains",
+          operator: "contains" as const,
           value: undefined,
         },
       ],
@@ -52,6 +55,52 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
       gqlQuery: COMPANIES_LIST_QUERY,
     },
   });
+
+  const nameFilter = getDefaultFilter("id", filters) as string[] | undefined;
+
+  const columns: ColumnsType<TableCompany> = [
+    {
+      dataIndex: "name",
+      title: "Company Title",
+      defaultFilteredValue: nameFilter,
+      filterIcon: <SearchOutlined />,
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input placeholder="Search Company" />
+        </FilterDropdown>
+      ),
+      render: (_: unknown, record: TableCompany) => (
+        <Space>
+          <CustomAvatar
+            shape="square"
+            name={record.name}
+            src={record.avatarUrl}
+            entityType="companies"
+            entityId={record.id}
+          />
+          <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
+        </Space>
+      ),
+    },
+    {
+      key: "openAmount",
+      title: "Open deals amount",
+      render: (_: unknown, company: TableCompany) => (
+        <Text>{currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}</Text>
+      ),
+    },
+    {
+      key: "actions",
+      title: "Actions",
+      fixed: "right",
+      render: (_: unknown, record: TableCompany) => (
+        <Space>
+          <EditButton hideText size="small" recordItemId={record.id} />
+          <DeleteButton hideText size="small" recordItemId={record.id} />
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -74,49 +123,11 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           />
         )}
       >
-        <Table {...tableProps} pagination={{ ...tableProps.pagination }}>
-          <Table.Column<Company>
-            dataIndex="name"
-            title="Company Title"
-            defaultFilteredValue={getDefaultFilter("id", filters)}
-            filterIcon={<SearchOutlined />}
-            filterDropdown={(props) => (
-              <FilterDropdown {...props}>
-                <Input placeholder="Search Company" />
-              </FilterDropdown>
-            )}
-            render={(value, record) => (
-              <Space>
-                <CustomAvatar
-                  shape="square"
-                  name={record.name}
-                  src={record.avatarUrl}
-                />
-                <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
-              </Space>
-            )}
-          />
-          <Table.Column<Company>
-            dataIndex="totalRevenue"
-            title="Open deals amount"
-            render={(value, company) => (
-              <Text>
-                {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
-              </Text>
-            )}
-          />
-          <Table.Column<Company>
-            dataIndex="id"
-            title="Actions"
-            fixed="right"
-            render={(value) => (
-              <Space>
-                <EditButton hideText size="small" recordItemId={value} />
-                <DeleteButton hideText size="small" recordItemId={value} />
-              </Space>
-            )}
-          />
-        </Table>
+        <Table
+          {...tableProps}
+          columns={columns}
+          pagination={{ ...tableProps.pagination }}
+        />
       </List>
       {children}
     </div>

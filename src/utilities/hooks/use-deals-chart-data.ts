@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { HttpError, LiveEvent, useList, useSubscription } from "@refinedev/core";
+import { CrudFilters, HttpError, LiveEvent, useList, useSubscription } from "@refinedev/core";
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
 
 import { DASHBOARD_DEALS_CHART_QUERY } from "@/graphql/queries";
@@ -30,7 +30,7 @@ export const useDealsChartData = (): UseDealsChartDataResult => {
     filters: [
       {
         field: "title",
-        operator: "in",
+        operator: "in" as const,
         value: ["WON", "LOST"],
       },
     ],
@@ -65,20 +65,9 @@ export const useDealsChartData = (): UseDealsChartDataResult => {
 
   const dealsSubscriptionParams = {
     resource: "deals",
-    subscriptionType: "useList",
-    filters: [
-      {
-        field: "title",
-        operator: "in",
-        value: ["WON", "LOST"],
-      },
-    ],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
-
-  console.debug(
-    "[useDealsChartData] subscribing to deals",
-    dealsSubscriptionParams,
-  );
 
   useSubscription({
     channel: "resources/deals",
@@ -94,20 +83,15 @@ export const useDealsChartData = (): UseDealsChartDataResult => {
 
   const dealStagesSubscriptionParams = {
     resource: "dealStages",
-    subscriptionType: "useList",
+    subscriptionType: "useList" as const,
     filters: [
       {
         field: "title",
-        operator: "in",
+        operator: "in" as const,
         value: ["WON", "LOST"],
       },
-    ],
+    ] as CrudFilters,
   };
-
-  console.debug(
-    "[useDealsChartData] subscribing to dealStages",
-    dealStagesSubscriptionParams,
-  );
 
   useSubscription({
     channel: "resources/dealStages",

@@ -71,6 +71,96 @@ export type UpdateTaskMutation = {
   };
 };
 
+export type CreateContactMutationVariables = Types.Exact<{
+  input: Types.CreateOneContactInput;
+}>;
+
+export type CreateContactMutation = {
+  createOneContact: Pick<
+    Types.Contact,
+    "id" | "name" | "jobTitle" | "email" | "phone" | "status" | "avatarUrl"
+  > & {
+    salesOwner?: Types.Maybe<Pick<Types.User, "id" | "name" | "avatarUrl">>;
+  };
+};
+
+export type UpdateContactMutationVariables = Types.Exact<{
+  input: Types.UpdateOneContactInput;
+}>;
+
+export type UpdateContactMutation = {
+  updateOneContact: Pick<
+    Types.Contact,
+    "id" | "name" | "jobTitle" | "email" | "phone" | "status" | "avatarUrl"
+  > & {
+    salesOwner?: Types.Maybe<Pick<Types.User, "id" | "name" | "avatarUrl">>;
+  };
+};
+
+export type DeleteContactMutationVariables = Types.Exact<{
+  input: Types.DeleteOneContactInput;
+}>;
+
+export type DeleteContactMutation = {
+  deleteOneContact?: Types.Maybe<Pick<Types.ContactDeleteResponse, "id">>;
+};
+
+export type CreateDealMutationVariables = Types.Exact<{
+  input: Types.CreateOneDealInput;
+}>;
+
+export type CreateDealMutation = {
+  createOneDeal: Pick<Types.Deal, "id" | "title" | "value" | "createdAt"> & {
+    stage?: Types.Maybe<Pick<Types.DealStage, "id" | "title">>;
+    company: Pick<Types.Company, "id" | "name" | "avatarUrl">;
+    dealOwner: Pick<Types.User, "id" | "name" | "avatarUrl">;
+  };
+};
+
+export type UpdateDealMutationVariables = Types.Exact<{
+  input: Types.UpdateOneDealInput;
+}>;
+
+export type UpdateDealMutation = {
+  updateOneDeal: Pick<Types.Deal, "id" | "title" | "value" | "createdAt"> & {
+    stage?: Types.Maybe<Pick<Types.DealStage, "id" | "title">>;
+    company: Pick<Types.Company, "id" | "name" | "avatarUrl">;
+    dealOwner: Pick<Types.User, "id" | "name" | "avatarUrl">;
+  };
+};
+
+export type DeleteDealMutationVariables = Types.Exact<{
+  input: Types.DeleteOneDealInput;
+}>;
+
+export type DeleteDealMutation = {
+  deleteOneDeal?: Types.Maybe<Pick<Types.DealDeleteResponse, "id">>;
+};
+
+export type CreateEventMutationVariables = Types.Exact<{
+  input: Types.CreateOneEventInput;
+}>;
+
+export type CreateEventMutation = {
+  createOneEvent: Pick<Types.Event, "id" | "title" | "color" | "startDate" | "endDate">;
+};
+
+export type UpdateEventMutationVariables = Types.Exact<{
+  input: Types.UpdateOneEventInput;
+}>;
+
+export type UpdateEventMutation = {
+  updateOneEvent: Pick<Types.Event, "id" | "title" | "color" | "startDate" | "endDate">;
+};
+
+export type DeleteEventMutationVariables = Types.Exact<{
+  input: Types.DeleteOneEventInput;
+}>;
+
+export type DeleteEventMutation = {
+  deleteOneEvent?: Types.Maybe<Pick<Types.EventDeleteResponse, "id">>;
+};
+
 export type DashboardTotalCountsQueryVariables = Types.Exact<{
   [key: string]: never;
 }>;
@@ -174,6 +264,36 @@ export type CompaniesListQuery = {
   };
 };
 
+export type CompaniesSelectQueryVariables = Types.Exact<{
+  filter: Types.CompanyFilter;
+  sorting?: Types.InputMaybe<Array<Types.CompanySort> | Types.CompanySort>;
+  paging: Types.OffsetPaging;
+}>;
+
+export type CompaniesSelectQuery = {
+  companies: Pick<Types.CompanyConnection, "totalCount"> & {
+    nodes: Array<Pick<Types.Company, "id" | "name" | "avatarUrl">>;
+  };
+};
+
+export type DealsListQueryVariables = Types.Exact<{
+  filter: Types.DealFilter;
+  sorting?: Types.InputMaybe<Array<Types.DealSort> | Types.DealSort>;
+  paging: Types.OffsetPaging;
+}>;
+
+export type DealsListQuery = {
+  deals: Pick<Types.DealConnection, "totalCount"> & {
+    nodes: Array<
+      Pick<Types.Deal, "id" | "title" | "value" | "createdAt"> & {
+        stage?: Types.Maybe<Pick<Types.DealStage, "id" | "title">>;
+        company: Pick<Types.Company, "id" | "name" | "avatarUrl">;
+        dealOwner: Pick<Types.User, "id" | "name" | "avatarUrl">;
+      }
+    >;
+  };
+};
+
 export type UsersSelectQueryVariables = Types.Exact<{
   filter: Types.UserFilter;
   sorting?: Types.InputMaybe<Array<Types.UserSort> | Types.UserSort>;
@@ -198,7 +318,9 @@ export type CompanyContactsTableQuery = {
       Pick<
         Types.Contact,
         "id" | "name" | "avatarUrl" | "jobTitle" | "email" | "phone" | "status"
-      >
+      > & {
+        salesOwner?: Types.Maybe<Pick<Types.User, "id" | "name" | "avatarUrl">>;
+      }
     >;
   };
 };
@@ -248,5 +370,29 @@ export type TaskStagesSelectQueryVariables = Types.Exact<{
 export type TaskStagesSelectQuery = {
   taskStages: Pick<Types.TaskStageConnection, "totalCount"> & {
     nodes: Array<Pick<Types.TaskStage, "id" | "title">>;
+  };
+};
+
+export type DealStagesSelectQueryVariables = Types.Exact<{
+  filter: Types.DealStageFilter;
+  sorting?: Types.InputMaybe<Array<Types.DealStageSort> | Types.DealStageSort>;
+  paging: Types.OffsetPaging;
+}>;
+
+export type DealStagesSelectQuery = {
+  dealStages: Pick<Types.DealStageConnection, "totalCount"> & {
+    nodes: Array<Pick<Types.DealStage, "id" | "title">>;
+  };
+};
+
+export type EventCategoriesSelectQueryVariables = Types.Exact<{
+  filter: Types.EventCategoryFilter;
+  sorting?: Types.InputMaybe<Array<Types.EventCategorySort> | Types.EventCategorySort>;
+  paging: Types.OffsetPaging;
+}>;
+
+export type EventCategoriesSelectQuery = {
+  eventCategories: Pick<Types.EventCategoryConnection, "totalCount"> & {
+    nodes: Array<Pick<Types.EventCategory, "id" | "title">>;
   };
 };

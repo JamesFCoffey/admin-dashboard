@@ -11,7 +11,6 @@ import {
   theme,
   Tooltip,
 } from "antd";
-import useToken from "antd/es/theme/useToken";
 import { Text } from "@/components/text";
 import {
   ClockCircleOutlined,
@@ -81,7 +80,7 @@ const ProjectCard = ({ id, title, dueDate, users }: ProjectCardProps) => {
       theme={{
         components: {
           Tag: {
-            colorText: useToken.colorTextSecondary,
+            colorText: token.colorTextSecondary,
           },
           Card: {
             headerBg: "transparent",
@@ -161,7 +160,12 @@ const ProjectCard = ({ id, title, dueDate, users }: ProjectCardProps) => {
             >
               {users.map((user) => (
                 <Tooltip key={user.id} title={user.name}>
-                  <CustomAvatar name={user.name} src={user.avatarUrl} />
+                  <CustomAvatar
+                    name={user.name}
+                    src={user.avatarUrl}
+                    entityType="users"
+                    entityId={user.id}
+                  />
                 </Tooltip>
               ))}
             </Space>

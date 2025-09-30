@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { HttpError, LiveEvent, useCustom, useSubscription } from "@refinedev/core";
+import { CrudFilters, HttpError, LiveEvent, useCustom, useSubscription } from "@refinedev/core";
 
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from "@/graphql/queries";
 import type { DashboardTotalCountsQuery } from "@/graphql/types";
@@ -74,8 +74,8 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
 
   const companiesSubscriptionParams = {
     resource: "companies",
-    subscriptionType: "useList",
-    filters: [],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
 
   console.debug(
@@ -97,8 +97,8 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
 
   const contactsSubscriptionParams = {
     resource: "contacts",
-    subscriptionType: "useList",
-    filters: [],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
 
   console.debug(
@@ -120,8 +120,8 @@ export const useDashboardTotals = (): UseDashboardTotalsResult => {
 
   const dealsSubscriptionParams = {
     resource: "deals",
-    subscriptionType: "useList",
-    filters: [],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
 
   console.debug(

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  CrudFilters,
   HttpError,
   LiveEvent,
   useList,
@@ -254,8 +255,8 @@ export const useTaskBoard = (): UseTaskBoardResult => {
 
   const taskSubscriptionParams = {
     resource: "tasks",
-    subscriptionType: "useList",
-    filters: [],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
 
   console.debug("[useTaskBoard] subscribing to tasks", taskSubscriptionParams);
@@ -274,8 +275,8 @@ export const useTaskBoard = (): UseTaskBoardResult => {
 
   const taskStagesSubscriptionParams = {
     resource: "taskStages",
-    subscriptionType: "useList",
-    filters: [],
+    subscriptionType: "useList" as const,
+    filters: [] as CrudFilters,
   };
 
   console.debug(

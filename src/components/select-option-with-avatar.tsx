@@ -4,10 +4,18 @@ import { Text } from "./text";
 type Props = {
   name: string;
   avatarUrl?: string;
+  entityType?: "companies" | "users";
+  entityId?: string | number;
   shape?: "circle" | "square";
 };
 
-const SelectOptionWithAvatar = ({ avatarUrl, name, shape }: Props) => {
+const SelectOptionWithAvatar = ({
+  avatarUrl,
+  name,
+  shape,
+  entityType,
+  entityId,
+}: Props) => {
   return (
     <div
       style={{
@@ -16,7 +24,13 @@ const SelectOptionWithAvatar = ({ avatarUrl, name, shape }: Props) => {
         gap: "8px",
       }}
     >
-      <CustomAvatar shape={shape} name={name} src={avatarUrl} />
+      <CustomAvatar
+        shape={shape}
+        name={name}
+        src={avatarUrl}
+        entityType={entityType}
+        entityId={entityId}
+      />
       <Text>{name}</Text>
     </div>
   );

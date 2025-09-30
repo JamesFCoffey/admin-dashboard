@@ -1,9 +1,33 @@
+import React from "react";
 import { getNameInitials } from "@/utilities";
 import { Avatar as AntdAvatar, AvatarProps } from "antd";
 
-type Props = AvatarProps & { name?: string };
+import { AvatarResource, useCustomAvatar } from "@/utilities/custom-avatar-store";
 
-const CustomAvatar = ({ name, style, ...rest }: Props) => {
+type Props = AvatarProps & {
+  name?: string;
+  entityType?: AvatarResource;
+  entityId?: string | number;
+  preferProvidedSource?: boolean;
+};
+
+const CustomAvatar = ({
+  name,
+  style,
+  entityType,
+  entityId,
+  src,
+  preferProvidedSource = false,
+  ...rest
+}: Props) => {
+  const overrideSrc = useCustomAvatar(entityType, entityId);
+
+  const effectiveSrc = preferProvidedSource
+    ? (src as string | undefined) ?? overrideSrc
+    : overrideSrc ?? (src as string | undefined);
+
+  const initials = getNameInitials(name || "");
+
   return (
     <AntdAvatar
       alt={name}
@@ -15,9 +39,10 @@ const CustomAvatar = ({ name, style, ...rest }: Props) => {
         border: "none",
         ...style,
       }}
-        {...rest}
+      src={effectiveSrc}
+      {...rest}
     >
-      {getNameInitials(name || "")}
+      {!effectiveSrc ? initials : null}
     </AntdAvatar>
   );
 };

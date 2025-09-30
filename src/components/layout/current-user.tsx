@@ -51,6 +51,8 @@ const CurrentUser = () => {
         <CustomAvatar
           name={user?.name}
           src={user?.avatarUrl}
+          entityType="users"
+          entityId={user?.id}
           size="default"
           style={{ cursor: "pointer" }}
         />

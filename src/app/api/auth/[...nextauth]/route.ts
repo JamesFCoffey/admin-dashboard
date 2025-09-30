@@ -1,4 +1,6 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
+import type { Account, NextAuthOptions, Session, User } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import { randomBytes } from "node:crypto";
@@ -268,7 +270,7 @@ const exchangeAccessToken = async (email: string, profile?: { name?: string }) =
   }
 };
 
-const providers: NextAuthConfig["providers"] = [];
+const providers: NextAuthOptions["providers"] = [];
 
 if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   providers.push(
@@ -324,7 +326,7 @@ if (providers.length === 0) {
   );
 }
 
-export const authConfig: NextAuthConfig = {
+const authConfig: NextAuthOptions = {
   providers,
   session: {
     strategy: "jwt",
@@ -335,7 +337,15 @@ export const authConfig: NextAuthConfig = {
     error: "/login",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({
+      token,
+      user,
+      account,
+    }: {
+      token: JWT;
+      user?: User | null;
+      account?: Account | null;
+    }) {
       if (user) {
         token.sub = token.sub ?? user.id;
         token.email = user.email ?? token.email;
@@ -370,28 +380,38 @@ export const authConfig: NextAuthConfig = {
 
       return token;
     },
-    async session({ session, token }) {
+    async session({
+      session,
+      token,
+    }: {
+      session: Session;
+      token: JWT;
+    }) {
       if (session.user) {
-        session.user.id = session.user.id ?? (token.sub as string | undefined);
-        session.user.email = session.user.email ?? (token.email as string | undefined);
+        const sessionUser = session.user as typeof session.user & {
+          id?: string;
+          accessToken?: string;
+          crmEmail?: string;
+        };
+
+        sessionUser.id = sessionUser.id ?? (token.sub as string | undefined);
+        sessionUser.email = sessionUser.email ?? (token.email as string | undefined);
 
         if (token.apiAccessToken) {
-          (session.user as typeof session.user & { accessToken: string }).accessToken =
-            token.apiAccessToken as string;
+          sessionUser.accessToken = token.apiAccessToken as string;
         }
 
         const accessEmail = (token as typeof token & { apiAccessEmail?: string })
           .apiAccessEmail;
 
         if (accessEmail) {
-          (session.user as typeof session.user & { crmEmail: string }).crmEmail =
-            accessEmail;
+          sessionUser.crmEmail = accessEmail;
         }
 
         const profileName = (token as typeof token & { profileName?: string })
           .profileName;
-        if (profileName && !session.user.name) {
-          session.user.name = profileName;
+        if (profileName && !sessionUser.name) {
+          sessionUser.name = profileName;
         }
       }
 
@@ -417,11 +437,9 @@ export const authConfig: NextAuthConfig = {
       },
     },
   },
-  trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authConfig);
 
-export const { auth, signIn, signOut } = handler;
 export { handler as GET, handler as POST };

@@ -165,6 +165,23 @@ export const USERS_SELECT_QUERY = gql`
   }
 `;
 
+export const COMPANIES_SELECT_QUERY = gql`
+  query CompaniesSelect(
+    $filter: CompanyFilter!
+    $sorting: [CompanySort!]
+    $paging: OffsetPaging!
+  ) {
+    companies(filter: $filter, sorting: $sorting, paging: $paging) {
+      totalCount
+      nodes {
+        id
+        name
+        avatarUrl
+      }
+    }
+  }
+`;
+
 // Query to get contacts associated with a company
 export const COMPANY_CONTACTS_TABLE_QUERY = gql`
   query CompanyContactsTable(
@@ -182,6 +199,44 @@ export const COMPANY_CONTACTS_TABLE_QUERY = gql`
         email
         phone
         status
+        salesOwner {
+          id
+          name
+          avatarUrl
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const DEALS_LIST_QUERY = gql`
+  query DealsList(
+    $filter: DealFilter!
+    $sorting: [DealSort!]
+    $paging: OffsetPaging!
+  ) {
+    deals(filter: $filter, sorting: $sorting, paging: $paging) {
+      totalCount
+      nodes {
+        id
+        title
+        value
+        createdAt
+        stage {
+          id
+          title
+        }
+        company {
+          id
+          name
+          avatarUrl
+        }
+        dealOwner {
+          id
+          name
+          avatarUrl
+        }
       }
     }
   }
@@ -241,6 +296,38 @@ export const TASK_STAGES_SELECT_QUERY = gql`
     $paging: OffsetPaging!
   ) {
     taskStages(filter: $filter, sorting: $sorting, paging: $paging) {
+      totalCount
+      nodes {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const DEAL_STAGES_SELECT_QUERY = gql`
+  query DealStagesSelect(
+    $filter: DealStageFilter!
+    $sorting: [DealStageSort!]
+    $paging: OffsetPaging!
+  ) {
+    dealStages(filter: $filter, sorting: $sorting, paging: $paging) {
+      totalCount
+      nodes {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const EVENT_CATEGORIES_SELECT_QUERY = gql`
+  query EventCategoriesSelect(
+    $filter: EventCategoryFilter!
+    $sorting: [EventCategorySort!]
+    $paging: OffsetPaging!
+  ) {
+    eventCategories(filter: $filter, sorting: $sorting, paging: $paging) {
       totalCount
       nodes {
         id

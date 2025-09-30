@@ -40,7 +40,7 @@ describe("useTaskBoard", () => {
     error: null,
     refetch: vi.fn(async () => ({ data: { data: stages } })),
   });
-  let refetchTasksMock: ReturnType<typeof vi.fn>;
+  let refetchTasksMock: Mock;
 
   beforeEach(() => {
     tasksState = [
@@ -57,7 +57,7 @@ describe("useTaskBoard", () => {
       } as TaskBoardTask,
     ];
 
-    refetchTasksMock = vi.fn(async () => ({ data: { data: tasksState } }));
+    refetchTasksMock = vi.fn(async () => ({ data: { data: tasksState } })) as Mock;
     latestMutationHandlers = {};
 
     mockedUseList.mockImplementation((params?: { resource?: string }) => {

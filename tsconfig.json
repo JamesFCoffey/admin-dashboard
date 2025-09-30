@@ -41,7 +41,9 @@
     "./src",
     "./dist/types/**/*.ts",
     "./next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next-3000/types/**/*.ts",
+    ".next-3001/types/**/*.ts"
   ], // Good
   "exclude": [
     "./node_modules"
