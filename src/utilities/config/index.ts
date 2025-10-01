@@ -49,22 +49,22 @@ const collectConfig = (): AppConfig => {
   const rawOauthProviders = process.env.NEXT_PUBLIC_OAUTH_PROVIDERS ?? process.env.OAUTH_PROVIDERS;
   const rawRealtimeFlag = process.env.NEXT_PUBLIC_ENABLE_REALTIME ?? process.env.ENABLE_REALTIME;
 
-  const missingKeys: string[] = [];
+  const fallbackKeys: string[] = [];
 
   const apiBaseUrl = rawApiBaseUrl ?? DEFAULTS.apiBaseUrl;
   const isUsingDefaultBase = !rawApiBaseUrl;
   if (isUsingDefaultBase) {
-    missingKeys.push('NEXT_PUBLIC_API_BASE_URL');
+    fallbackKeys.push('NEXT_PUBLIC_API_BASE_URL');
   }
 
   const graphqlUrl = buildGraphqlUrl(apiBaseUrl, rawGraphqlUrl ?? undefined);
   if (!rawGraphqlUrl && isUsingDefaultBase) {
-    missingKeys.push('NEXT_PUBLIC_GRAPHQL_URL');
+    fallbackKeys.push('NEXT_PUBLIC_GRAPHQL_URL');
   }
 
   const graphqlWsUrl = buildGraphqlWsUrl(apiBaseUrl, rawGraphqlWsUrl ?? undefined);
   if (!rawGraphqlWsUrl && isUsingDefaultBase) {
-    missingKeys.push('NEXT_PUBLIC_GRAPHQL_WS_URL');
+    fallbackKeys.push('NEXT_PUBLIC_GRAPHQL_WS_URL');
   }
 
   const featureFlags = {
@@ -73,12 +73,9 @@ const collectConfig = (): AppConfig => {
 
   const oauthProviders = parseOauthProviders(rawOauthProviders ?? undefined);
 
-  if (missingKeys.length) {
-    const message = formatConfigError(missingKeys);
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error(message);
-    }
-    logger.warn(`${message}. Falling back to baked-in defaults for development.`);
+  if (fallbackKeys.length) {
+    const message = formatConfigError(fallbackKeys);
+    logger.warn(`${message}. Using baked-in defaults; configure environment variables to avoid this warning.`);
   }
 
   const result = AppConfigSchema.safeParse({
